@@ -9,7 +9,14 @@ on:
   # pull_request:
   #   branches: [ "main" ]
   workflow_call:
-  
+    inputs:
+      serviceName:
+        description: 'Service name'
+        required: false
+      buildVersion:
+        description: 'Build version'
+        required: false
+
 jobs:
   build:
 
