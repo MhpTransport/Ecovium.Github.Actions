@@ -4,19 +4,13 @@
 name: Build UI Angular .NET App
 
 on:
-  # push:
-  #   branches: [ "main" ]
-  # pull_request:
-  #   branches: [ "main" ]
   workflow_call:
     inputs:
       serviceName:
         description: 'Service name'
-        required: false
         type: string
       buildVersion:
         description: 'Build version'
-        required: false
         type: string
 
 jobs:
