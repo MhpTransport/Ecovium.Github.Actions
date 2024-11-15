@@ -14,8 +14,16 @@ on:
         type: string
 
 jobs:
-  build:
+  set_env_variables:
+    env:
+      template: ../partial-templates/variables.yml
+      buildConfiguration: Release
+    steps:
+    - uses: actions/checkout@v2  
 
+
+  build:
+    needs: set_env_variables
     runs-on: ubuntu-latest
 
     steps:
