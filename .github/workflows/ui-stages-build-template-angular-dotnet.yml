@@ -14,17 +14,20 @@ on:
         type: string
 
 jobs:
-  set_env_variables:
-    runs-on: ubuntu-latest
+  Build1:
     env:
-      template: ../partial-templates/variables.yml
-      buildConfiguration: Release
+      projectService: "MHP.Portal.App"
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2  
+    - uses: actions/checkout@v2
+    - name: Npm install --legacy-peer-deps
+      run: npm install --legacy-peer-deps ${{ github.workspace }}/${{ env.projectService }}/ClientApp
+      env:
+        NODE_OPTIONS: --max_old_space_size=4096
 
 
-  build:
-    needs: set_env_variables
+  build2:
+    needs: Build1
     runs-on: ubuntu-latest
 
     steps:
