@@ -1,0 +1,11 @@
+env:
+  feedName: EcoviumCommon
+  containerRegistrySC: acrsimplechaindevSC
+  sonarQubeSC: SonarQubeSC
+  npmTestsAvailable: false
+  packageJsonPath: ''
+  group: acr-devops
+  sonarQubeEndpointUrl: http://simplechain-sq-dev.germanywestcentral.cloudapp.azure.com
+  sonarQubeApiUserToken: squ_53e25f1abe6db9259095570120052adad9be4380
+  sonarQubeAvailable: ''
+  RunCypressGuiTests: ''
