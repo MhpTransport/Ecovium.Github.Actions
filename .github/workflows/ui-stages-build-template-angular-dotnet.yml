@@ -15,6 +15,7 @@ on:
 
 jobs:
   set_env_variables:
+    runs-on: ubuntu-latest
     env:
       template: ../partial-templates/variables.yml
       buildConfiguration: Release
