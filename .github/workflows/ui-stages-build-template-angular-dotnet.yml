@@ -27,9 +27,6 @@ jobs:
         node-version: '20'
         registry-url: 'https://registry.npmjs.org/'
 
-    - name: Show .npmrc
-      run: cat .npmrc
-
     - name: Npm install --legacy-peer-deps
       run: npm install --legacy-peer-deps ${{ github.workspace }}/${{ env.projectService }}/ClientApp
       env:
