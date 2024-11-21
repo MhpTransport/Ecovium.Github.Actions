@@ -17,15 +17,18 @@ jobs:
   Build1:
     env:
       projectService: "MHP.Portal.App"
+      template: ../partial-templates/variables.yml
+      buildConfiguration: Release
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
       with:
-        node-version: '20'
-        registry-url: 'https://registry.npmjs.org/'
+        persist-credentials: true
+    # - name: Set up Node.js
+    #   uses: actions/setup-node@v3
+    #   with:
+    #     node-version: '20'
+    #     registry-url: 'https://registry.npmjs.org/'
 
     - name: Npm install --legacy-peer-deps
       run: npm install --legacy-peer-deps ${{ github.workspace }}/${{ env.projectService }}/ClientApp
