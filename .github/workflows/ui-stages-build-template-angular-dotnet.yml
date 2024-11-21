@@ -21,8 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Npm install --legacy-peer-deps
-      run: npm install @ecovium/appearance
-      # run: npm install --legacy-peer-deps ${{ github.workspace }}/${{ env.projectService }}/ClientApp
+      run: npm install --legacy-peer-deps ${{ github.workspace }}/${{ env.projectService }}/ClientApp
       env:
         NODE_OPTIONS: --max_old_space_size=4096
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
