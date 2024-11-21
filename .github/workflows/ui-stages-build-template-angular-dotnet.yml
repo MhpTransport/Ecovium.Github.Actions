@@ -20,6 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: npm auth
+      run: vsts-npm-auth -config .npmrc -force
     - name: Npm install --legacy-peer-deps
       run: npm install --legacy-peer-deps ${{ github.workspace }}/${{ env.projectService }}/ClientApp
       env:
