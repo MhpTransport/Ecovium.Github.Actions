@@ -32,7 +32,7 @@ jobs:
         NODE_OPTIONS: --max_old_space_size=4096
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  quality-gate-npm-pre-build:
+  calling-workflow:
     uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-pre-build-template.yml@develop
     needs: npm-install
     # with:
