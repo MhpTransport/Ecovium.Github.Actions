@@ -34,6 +34,7 @@ jobs:
 
   quality-gate-npm-pre-build:
     uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-pre-build-template.yml@develop
+    needs: npm-install
     # with:
     #   skipTests: false
     #   sonarQubeSC: SonarQubeSC
