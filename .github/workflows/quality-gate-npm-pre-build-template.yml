@@ -20,6 +20,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-  calling-workflow:
+  calling-workflow-quality-gate-pre-build:
     needs: quality-gate-npm-prebuild
     uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-pre-build-template.yml@develop
