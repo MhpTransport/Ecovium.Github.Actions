@@ -25,7 +25,7 @@ jobs:
       # run: npm install --legacy-peer-deps ${{ github.workspace }}/${{ env.projectService }}/ClientApp
       env:
         NODE_OPTIONS: --max_old_space_size=4096
-        NODE_AUTH_TOKEN: hi67iigjwwhvwftynkpjgxl23rjrmoap6p6qu2o6njhfomcgvkea
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 
   build2:
