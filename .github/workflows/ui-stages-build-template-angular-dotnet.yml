@@ -20,6 +20,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: npm version check
+      run: npm -v
+    - name: node version check
+      run: node -v
+    - name: npm clean
+      run: npm cache clean --force
     - name: npm login
       run: npm login --registry=https://registry.npmjs.org/
     - name: Npm install --legacy-peer-deps
