@@ -50,7 +50,7 @@ jobs:
       with:
         persist-credentials: true
     - name: Npm run build
-      run: npm run build --dev ${{ github.workspace }}/${{ env.projectService }}/ClientApp
+      run: npm run build ${{ github.workspace }}/${{ env.projectService }}/ClientApp
       env:
         NODE_OPTIONS: --max_old_space_size=4096
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
