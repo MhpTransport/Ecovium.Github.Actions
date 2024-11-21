@@ -34,9 +34,9 @@ jobs:
 
   quality-gate-npm-pre-build:
     uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-pre-build-template.yml@develop
-    with:
-      skipTests: ${{ env. parameters.skipTests  }}
-      sonarQubeSC: ${{ env. variables.sonarQubeSC  }}
+    # with:
+    #   skipTests: false
+    #   sonarQubeSC: SonarQubeSC
 
 
 #   build:
