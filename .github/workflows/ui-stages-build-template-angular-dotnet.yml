@@ -20,14 +20,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: npm version check
-      run: npm -v
-    - name: node version check
-      run: node -v
-    - name: npm clean
-      run: npm cache clean --force
-    - name: npm login
-      run: npm login --registry=https://registry.npmjs.org/
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+        registry-url: 'https://registry.npmjs.org/'
+
+    - name: Configure npm for private registry
+      run: echo "@ecovium:registry=https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/npm/registry/" >> ~/.npmrc
+
     - name: Npm install --legacy-peer-deps
       run: npm install --legacy-peer-deps ${{ github.workspace }}/${{ env.projectService }}/ClientApp
       env:
