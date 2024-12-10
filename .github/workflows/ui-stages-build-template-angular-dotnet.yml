@@ -45,19 +45,20 @@ jobs:
       template: ../partial-templates/variables.yml
       buildConfiguration: Release
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/${{ env.projectService }}/ClientApp
     steps:
     - uses: actions/checkout@v4
       with:
         persist-credentials: true
     - name: Npm install --legacy-peer-deps
-      run: npm install --legacy-peer-deps ${{ github.workspace }}/${{ env.projectService }}/ClientApp
+      run: npm install --legacy-peer-deps
       env:
         NODE_OPTIONS: --max_old_space_size=4096
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     - name: Npm run build
       run: npm run build --prod
-      with:
-        path: ${{ github.workspace }}/${{ env.projectService }}/ClientApp
       env:
         NODE_OPTIONS: --max_old_space_size=4096
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
