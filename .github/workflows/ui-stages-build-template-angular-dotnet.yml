@@ -55,7 +55,9 @@ jobs:
         NODE_OPTIONS: --max_old_space_size=4096
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     - name: Npm run build
-      run: npm run build --prod ${{ github.workspace }}/${{ env.projectService }}/ClientApp
+      run: npm run build --prod
+      with:
+        path: ${{ github.workspace }}/${{ env.projectService }}/ClientApp
       env:
         NODE_OPTIONS: --max_old_space_size=4096
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
