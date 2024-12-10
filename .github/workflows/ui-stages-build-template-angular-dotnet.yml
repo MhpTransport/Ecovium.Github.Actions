@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ github.workspace }}/$GITHUB_REPOSITORY/ClientApp
+        working-directory: ${{ github.workspace }}/ClientApp
     steps:
     - uses: actions/checkout@v4
       with:
@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ github.workspace }}/${{ env.projectService }}/ClientApp
+        working-directory: ${{ github.workspace }}/ClientApp
     steps:
     - uses: actions/checkout@v4
       with:
