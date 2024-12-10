@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./MHP.Portal.App/ClientApp
+        working-directory: ./${{ env.projectService }}/ClientApp
     steps:
     - uses: actions/checkout@v4
       with:
@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ github.workspace }}/${{ github.repository }}/ClientApp
+        working-directory: ./${{ env.projectService }}/ClientApp
     steps:
     - uses: actions/checkout@v4
       with:
