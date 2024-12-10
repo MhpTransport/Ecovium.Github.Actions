@@ -70,6 +70,12 @@ jobs:
         NODE_OPTIONS: --max_old_space_size=4096
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+  calling-workflow-quality-gate-npm-template:
+    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-template.yml@develop
+    needs: npm-run-build
+    # with:
+    #   skipTests: false
+    #   sonarQubeSC: SonarQubeSC
 
 #   build:
 #     name: Build
