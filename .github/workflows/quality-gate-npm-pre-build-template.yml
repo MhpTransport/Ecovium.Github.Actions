@@ -18,7 +18,9 @@ jobs:
   quality-gate-npm-prebuild:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    # - uses: actions/checkout@v4
+    - name: Running quality-gate-npm-prebuild
+      run: echo "Running quality-gate-npm-prebuild"
 
   calling-workflow-quality-gate-pre-build:
     needs: quality-gate-npm-prebuild
