@@ -12,6 +12,12 @@ on:
       buildVersion:
         description: 'Build version'
         type: string
+      projectService:
+        required: true
+        type: string
+      projectCsprojPath:
+        required: true
+        type: string
 
 jobs:
 
@@ -23,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./$projectService/ClientApp
+        working-directory: ./${{ inputs.projectService }}/ClientApp
     steps:
     - uses: actions/checkout@v4
       with:
@@ -50,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./$projectService/ClientApp
+        working-directory: ./${{ inputs.projectService }}/ClientApp
     steps:
     - uses: actions/checkout@v4
       with:
