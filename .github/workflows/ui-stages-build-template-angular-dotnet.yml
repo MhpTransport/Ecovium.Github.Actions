@@ -77,6 +77,17 @@ jobs:
     #   skipTests: false
     #   sonarQubeSC: SonarQubeSC
 
+  NuGetAuthenticate:
+    needs: calling-workflow-quality-gate-npm-template
+    env:
+      template: ../partial-templates/variables.yml
+      buildConfiguration: Release
+    runs-on: ubuntu-latest
+    steps:
+    - name: List NuGet Packages
+      run: dotnet nuget list source
+
+
 #   build:
 #     name: Build
 #     runs-on: ubuntu-latest
