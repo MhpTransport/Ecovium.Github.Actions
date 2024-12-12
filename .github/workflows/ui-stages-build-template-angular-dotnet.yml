@@ -95,8 +95,8 @@ jobs:
     - name: Authenticate to Azure DevOps NuGet feed
       run: |
         dotnet nuget add source \
-          --name EcoviumCommon \
           --source https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json \
+          --name EcoviumCommon \
           --username az \
           --password ${{ secrets.NPM_TOKEN }} \
           --store-password-in-clear-text
