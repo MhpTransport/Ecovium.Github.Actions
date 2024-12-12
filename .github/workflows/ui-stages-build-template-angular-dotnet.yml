@@ -78,7 +78,7 @@ jobs:
   #   #   sonarQubeSC: SonarQubeSC
 
   NuGetAuthenticate:
-    needs: calling-workflow-quality-gate-npm-template
+    # needs: calling-workflow-quality-gate-npm-template
     env:
       template: ../partial-templates/variables.yml
       buildConfiguration: Release
