@@ -92,16 +92,19 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
-    - name: Authenticate to Azure DevOps NuGet feed
-      run: |
-        dotnet nuget add source https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json \
-          --name EcoviumCommon \
-          --username az \
-          --password ${{ secrets.NPM_TOKEN }} \
-          --store-password-in-clear-text
+    # - name: Authenticate to Azure DevOps NuGet feed
+    #   run: |
+    #     dotnet nuget add source https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json \
+    #       --name EcoviumCommon \
+    #       --username az \
+    #       --password ${{ secrets.NPM_TOKEN }} \
+    #       --store-password-in-clear-text
 
-    - name: Dotnet Restore
-      run: dotnet restore ${{ inputs.projectCsprojPath }}
+    - name: Dotnet test
+      run: dotnet test
+
+    # - name: Dotnet Restore
+    #   run: dotnet restore ${{ inputs.projectCsprojPath }}
 
 #   build:
 #     name: Build
