@@ -93,7 +93,7 @@ jobs:
     - name: Dotnet Restore
       run: dotnet restore ${{ inputs.projectCsprojPath }}
       env:
-        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        NUGET_AUTH_TOKEN: ${{ secrets.NUGET_AUTH_TOKEN }}
 
 #   build:
 #     name: Build
