@@ -92,6 +92,8 @@ jobs:
     #     dotnet-version: '8.0.x'
     - name: Dotnet Restore
       run: dotnet restore ${{ inputs.projectCsprojPath }}
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 #   build:
 #     name: Build
