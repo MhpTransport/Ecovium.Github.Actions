@@ -82,16 +82,25 @@ jobs:
     env:
       template: ../partial-templates/variables.yml
       buildConfiguration: Release
-      NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
       with:
         persist-credentials: true
-    - uses: actions/setup-dotnet@v1
+
+    - uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '3.1.x'
-        source-url: 'https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json' 
+        dotnet-version: '8.0.x'
+
+    - name: Authenticate to Azure DevOps NuGet feed
+      run: |
+        dotnet nuget add source \
+          --name EcoviumCommon \
+          --source https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json \
+          --username az \
+          --password ${{ secrets.NPM_TOKEN }} \
+          --store-password-in-clear-text
+
     - name: Dotnet Restore
       run: dotnet restore ${{ inputs.projectCsprojPath }}
 
