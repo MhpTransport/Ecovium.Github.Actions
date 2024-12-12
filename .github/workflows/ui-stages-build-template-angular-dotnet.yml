@@ -110,7 +110,7 @@ jobs:
     - name: Dotnet restore
       run: dotnet restore ${{ inputs.projectCsprojPath }} --configfile nuget.config
       env:
-        NUGET_AUTH_TOKEN: ${{ secrets.NUGET_AUTH_TOKEN }}
+        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     - name: List Nuget Sources After
       run: dotnet nuget list source
