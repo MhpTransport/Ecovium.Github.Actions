@@ -21,23 +21,23 @@ on:
 
 jobs:
 
-  # npm-install:
-  #   env:
-  #     template: ../partial-templates/variables.yml
-  #     buildConfiguration: Release
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: ./${{ inputs.projectService }}/ClientApp
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #     with:
-  #       persist-credentials: true
-  #   - name: Npm install --legacy-peer-deps
-  #     run: npm install --legacy-peer-deps 
-  #     env:
-  #       NODE_OPTIONS: --max_old_space_size=4096
-  #       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  npm-install:
+    env:
+      template: ../partial-templates/variables.yml
+      buildConfiguration: Release
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./${{ inputs.projectService }}/ClientApp
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: true
+    - name: Npm install --legacy-peer-deps
+      run: npm install --legacy-peer-deps 
+      env:
+        NODE_OPTIONS: --max_old_space_size=4096
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   calling-workflow-quality-gate-npm-pre-build:
     uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-pre-build-template.yml@develop
@@ -78,7 +78,7 @@ jobs:
     #   sonarQubeSC: SonarQubeSC
 
   NuGetAuthenticate:
-    # needs: calling-workflow-quality-gate-npm-template
+    needs: calling-workflow-quality-gate-npm-template
     env:
       template: ../partial-templates/variables.yml
       buildConfiguration: Release
