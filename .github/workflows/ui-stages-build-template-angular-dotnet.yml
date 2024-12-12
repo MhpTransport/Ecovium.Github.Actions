@@ -82,6 +82,7 @@ jobs:
     env:
       template: ../partial-templates/variables.yml
       buildConfiguration: Release
+      NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -90,7 +91,9 @@ jobs:
 
     - uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '9.0.0'
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     # - name: Authenticate to Azure DevOps NuGet feed
     #   run: |
@@ -101,10 +104,7 @@ jobs:
     #       --store-password-in-clear-text
 
     - name: Dotnet restore
-      run: dotnet restore ${{ inputs.projectCsprojPath }} --interactive
-
-    # - name: Dotnet Restore
-    #   run: dotnet restore ${{ inputs.projectCsprojPath }}
+      run: dotnet restore ${{ inputs.projectCsprojPath }}
 
 #   build:
 #     name: Build
