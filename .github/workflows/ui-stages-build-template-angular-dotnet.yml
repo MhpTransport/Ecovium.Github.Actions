@@ -21,61 +21,61 @@ on:
 
 jobs:
 
-  npm-install:
-    env:
-      template: ../partial-templates/variables.yml
-      buildConfiguration: Release
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./${{ inputs.projectService }}/ClientApp
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        persist-credentials: true
-    - name: Npm install --legacy-peer-deps
-      run: npm install --legacy-peer-deps 
-      env:
-        NODE_OPTIONS: --max_old_space_size=4096
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  # npm-install:
+  #   env:
+  #     template: ../partial-templates/variables.yml
+  #     buildConfiguration: Release
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: ./${{ inputs.projectService }}/ClientApp
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #     with:
+  #       persist-credentials: true
+  #   - name: Npm install --legacy-peer-deps
+  #     run: npm install --legacy-peer-deps 
+  #     env:
+  #       NODE_OPTIONS: --max_old_space_size=4096
+  #       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  calling-workflow-quality-gate-npm-pre-build:
-    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-pre-build-template.yml@develop
-    needs: npm-install
-    # with:
-    #   skipTests: false
-    #   sonarQubeSC: SonarQubeSC
+  # calling-workflow-quality-gate-npm-pre-build:
+  #   uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-pre-build-template.yml@develop
+  #   needs: npm-install
+  #   # with:
+  #   #   skipTests: false
+  #   #   sonarQubeSC: SonarQubeSC
 
-  npm-run-build:
-    needs: calling-workflow-quality-gate-npm-pre-build
-    env:
-      template: ../partial-templates/variables.yml
-      buildConfiguration: Release
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./${{ inputs.projectService }}/ClientApp
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        persist-credentials: true
-    - name: Npm install --legacy-peer-deps
-      run: npm install --legacy-peer-deps
-      env:
-        NODE_OPTIONS: --max_old_space_size=4096
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-    - name: Npm run build
-      run: npm run build --prod
-      env:
-        NODE_OPTIONS: --max_old_space_size=4096
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  # npm-run-build:
+  #   needs: calling-workflow-quality-gate-npm-pre-build
+  #   env:
+  #     template: ../partial-templates/variables.yml
+  #     buildConfiguration: Release
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: ./${{ inputs.projectService }}/ClientApp
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #     with:
+  #       persist-credentials: true
+  #   - name: Npm install --legacy-peer-deps
+  #     run: npm install --legacy-peer-deps
+  #     env:
+  #       NODE_OPTIONS: --max_old_space_size=4096
+  #       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  #   - name: Npm run build
+  #     run: npm run build --prod
+  #     env:
+  #       NODE_OPTIONS: --max_old_space_size=4096
+  #       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  calling-workflow-quality-gate-npm-template:
-    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-template.yml@develop
-    needs: npm-run-build
-    # with:
-    #   skipTests: false
-    #   sonarQubeSC: SonarQubeSC
+  # calling-workflow-quality-gate-npm-template:
+  #   uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-template.yml@develop
+  #   needs: npm-run-build
+  #   # with:
+  #   #   skipTests: false
+  #   #   sonarQubeSC: SonarQubeSC
 
   NuGetAuthenticate:
     needs: calling-workflow-quality-gate-npm-template
@@ -84,10 +84,16 @@ jobs:
       buildConfiguration: Release
     runs-on: ubuntu-latest
     steps:
-    - name: List NuGet Packages
+    - name: List NuGet Packages before
       run: dotnet nuget list source
-
-
+    - uses: actions/setup-dotnet@v4
+      with:
+        source-url: https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+    - name: List NuGet Packages after
+      run: dotnet nuget list source
+      
 #   build:
 #     name: Build
 #     runs-on: ubuntu-latest
