@@ -91,7 +91,7 @@ jobs:
     #   with:
     #     dotnet-version: '8.0.x'
     - name: Check Current path
-      run: pwd
+      run: ls -lrt
     - name: Dotnet Restore
       run: find . -name MHP.Portal.App.csproj
       # run: dotnet restore ${{ inputs.projectCsprojPath }}
