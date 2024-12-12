@@ -83,16 +83,15 @@ jobs:
       template: ../partial-templates/variables.yml
       buildConfiguration: Release
     runs-on: ubuntu-latest
-    # defaults:
-    #   run:
-    #     working-directory: ./
     steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: true
     # - uses: actions/setup-dotnet@v4
     #   with:
     #     dotnet-version: '8.0.x'
     - name: Dotnet Restore
-      run: dotnet restore MHP.Portal.App.csproj
-      # run: dotnet restore ${{ inputs.projectCsprojPath }}
+      run: dotnet restore ${{ inputs.projectCsprojPath }}
 
 #   build:
 #     name: Build
