@@ -90,8 +90,11 @@ jobs:
     # - uses: actions/setup-dotnet@v4
     #   with:
     #     dotnet-version: '8.0.x'
+    - name: Check Current path
+      run: pwd
     - name: Dotnet Restore
-      run: dotnet restore ${{ inputs.projectCsprojPath }}
+      run: find . -name MHP.Portal.App.csproj
+      # run: dotnet restore ${{ inputs.projectCsprojPath }}
 
 #   build:
 #     name: Build
