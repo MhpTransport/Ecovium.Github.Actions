@@ -100,8 +100,8 @@ jobs:
     #       --password ${{ secrets.NPM_TOKEN }} \
     #       --store-password-in-clear-text
 
-    - name: Dotnet test
-      run: dotnet test
+    - name: Dotnet restore
+      run: dotnet restore ${{ inputs.projectCsprojPath }} --interactive
 
     # - name: Dotnet Restore
     #   run: dotnet restore ${{ inputs.projectCsprojPath }}
