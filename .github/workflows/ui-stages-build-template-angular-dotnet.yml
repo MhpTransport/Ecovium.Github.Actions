@@ -92,9 +92,9 @@ jobs:
       with:
         dotnet-version: '9.x.x'
 
-    # - name: Remove existing NuGet source
-    #   run: |
-    #     dotnet nuget remove source EcoviumCommon || echo "Source not found, skipping removal"
+    - name: Remove existing NuGet source
+      run: |
+        dotnet nuget remove source EcoviumCommon || echo "Source not found, skipping removal"
 
     # - name: Authenticate to Azure DevOps NuGet feed
     #   run: |
@@ -108,9 +108,9 @@ jobs:
       run: dotnet nuget list source
 
     - name: Dotnet restore
-      run: dotnet restore ${{ inputs.projectCsprojPath }}
+      run: dotnet restore ${{ inputs.projectCsprojPath }} --configfile nuget.config
       env:
-        NUGET_AUTH_TOKEN: ${{ secrets.NUGET_AUTH_TOKEN }}
+        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     - name: List Nuget Sources After
       run: dotnet nuget list source
