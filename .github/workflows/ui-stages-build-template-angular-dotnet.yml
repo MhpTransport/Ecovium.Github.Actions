@@ -104,15 +104,15 @@ jobs:
     #       --password ${{ secrets.NUGET_AUTH_TOKEN }} \
     #       --store-password-in-clear-text
 
-    - name: List Nuget Sources
+    - name: List Nuget Sources Before
       run: dotnet nuget list source
 
     - name: Dotnet restore
-      run: dotnet restore ${{ inputs.projectCsprojPath }} --configfile nuget.config
+      run: dotnet restore ${{ inputs.projectCsprojPath }}
       env:
-        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        NUGET_AUTH_TOKEN: ${{ secrets.NUGET_AUTH_TOKEN }}
 
-    - name: List Nuget Sources
+    - name: List Nuget Sources After
       run: dotnet nuget list source
 
 #   build:
