@@ -92,9 +92,9 @@ jobs:
       with:
         dotnet-version: '9.x.x'
 
-    # - name: Remove existing NuGet source
-    #   run: |
-    #     dotnet nuget remove source EcoviumCommon || echo "Source not found, skipping removal"
+    - name: Remove existing NuGet source
+      run: |
+        dotnet nuget remove source EcoviumCommon || echo "Source not found, skipping removal"
 
     - name: List Nuget Sources
       run: dotnet nuget list source
