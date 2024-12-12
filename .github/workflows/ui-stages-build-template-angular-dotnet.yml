@@ -92,7 +92,7 @@ jobs:
         dotnet-version: '3.1.x'
         source-url: 'https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json'
       env:  
-        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
     - name: Dotnet Restore
       run: dotnet restore ${{ inputs.projectCsprojPath }}
 
