@@ -84,13 +84,12 @@ jobs:
       buildConfiguration: Release
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
+    # - uses: actions/setup-dotnet@v4
+    #   with:
+    #     dotnet-version: '8.0.x'
     - name: Dotnet Restore
       run: dotnet restore ${{ inputs.projectCsprojPath }} \
-             --source https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json \
-             --source https://api.nuget.org/v3/index.json
+             --source https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json
 
 #   build:
 #     name: Build
