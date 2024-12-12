@@ -90,7 +90,7 @@ jobs:
 
     - uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '9.x.x'
+        dotnet-version: '8.x.x'
 
     - name: Remove existing NuGet source
       run: |
