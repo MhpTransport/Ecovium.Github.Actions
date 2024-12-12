@@ -83,17 +83,15 @@ jobs:
       template: ../partial-templates/variables.yml
       buildConfiguration: Release
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./
+    # defaults:
+    #   run:
+    #     working-directory: ./
     steps:
     # - uses: actions/setup-dotnet@v4
     #   with:
     #     dotnet-version: '8.0.x'
-    - name: Check Current path
-      run: ls -lrt
     - name: Dotnet Restore
-      run: find . -name MHP.Portal.App.csproj
+      run: dotnet restore MHP.Portal.App.csproj
       # run: dotnet restore ${{ inputs.projectCsprojPath }}
 
 #   build:
