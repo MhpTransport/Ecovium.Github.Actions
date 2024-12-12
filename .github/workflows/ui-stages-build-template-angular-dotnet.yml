@@ -97,7 +97,7 @@ jobs:
         dotnet nuget remove source EcoviumCommon || echo "Source not found, skipping removal"
 
     - name: Dotnet restore
-      run: dotnet restore ${{ inputs.projectCsprojPath }} --configfile nuget.config
+      run: dotnet restore ${{ inputs.projectCsprojPath }}
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
