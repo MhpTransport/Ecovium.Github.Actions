@@ -82,7 +82,6 @@ jobs:
     env:
       template: ../partial-templates/variables.yml
       buildConfiguration: Release
-      NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -92,19 +91,21 @@ jobs:
     - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '9.x.x'
-      env:
-        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-    # - name: Authenticate to Azure DevOps NuGet feed
-    #   run: |
-    #     dotnet nuget add source https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json \
-    #       --name EcoviumCommon \
-    #       --username az \
-    #       --password ${{ secrets.NPM_TOKEN }} \
-    #       --store-password-in-clear-text
+    - name: Remove existing NuGet source
+      run: |
+        dotnet nuget remove source EcoviumCommon || echo "Source not found, skipping removal"
+
+    - name: Authenticate to Azure DevOps NuGet feed
+      run: |
+        dotnet nuget add source https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json \
+          --name EcoviumCommon \
+          --username az \
+          --password ${{ secrets.NPM_TOKEN }} \
+          --store-password-in-clear-text
 
     - name: Dotnet restore
-      run: dotnet restore ${{ inputs.projectCsprojPath }} --verbosity detailed
+      run: dotnet restore ${{ inputs.projectCsprojPath }}
 
 #   build:
 #     name: Build
