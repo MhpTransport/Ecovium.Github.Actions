@@ -96,16 +96,18 @@ jobs:
       run: |
         dotnet nuget remove source EcoviumCommon || echo "Source not found, skipping removal"
 
-    - name: Authenticate to Azure DevOps NuGet feed
-      run: |
-        dotnet nuget add source https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json \
-          --name EcoviumCommon \
-          --username az \
-          --password ${{ secrets.NUGET_AUTH_TOKEN }} \
-          --store-password-in-clear-text
+    # - name: Authenticate to Azure DevOps NuGet feed
+    #   run: |
+    #     dotnet nuget add source https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json \
+    #       --name EcoviumCommon \
+    #       --username az \
+    #       --password ${{ secrets.NUGET_AUTH_TOKEN }} \
+    #       --store-password-in-clear-text
 
     - name: Dotnet restore
-      run: dotnet restore ${{ inputs.projectCsprojPath }}
+      run: dotnet restore ${{ inputs.projectCsprojPath }} --configfile nuget.config
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NUGET_AUTH_TOKEN }}
 
 #   build:
 #     name: Build
