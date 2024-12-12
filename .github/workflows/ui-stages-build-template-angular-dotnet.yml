@@ -90,7 +90,7 @@ jobs:
       with:
         source-url: https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json
       env:
-        NUGET_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     - name: List NuGet Packages after
       run: dotnet nuget list source
       
