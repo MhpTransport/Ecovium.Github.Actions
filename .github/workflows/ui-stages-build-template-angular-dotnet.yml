@@ -85,8 +85,7 @@ jobs:
       ACR_NAME: ${{ secrets.ACR_NAME }}
       ACR_USER_NAME: ${{ secrets.ACR_USER_NAME }}
       ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
-      TAG: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
-      SERVICE_NAME: ${{ inputs.serviceName }}
+      TAG: '${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -131,8 +130,8 @@ jobs:
       if: always()
       run: |
         docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"    
-        docker build . -t container/"${{ inputs.serviceName }}":"${TAG}"
-        docker tag container/"${{ inputs.serviceName }}":"${TAG}" $ACR_NAME/container/"${{ inputs.serviceName }}":"${TAG}"
-        docker push $ACR_NAME/container/"${{ inputs.serviceName }}":"${TAG}"
+        docker build . -t container/${{ inputs.serviceName }}:${TAG}
+        docker tag container/${{ inputs.serviceName }}:${TAG} $ACR_NAME/container/${{ inputs.serviceName }}:${TAG}
+        docker push $ACR_NAME/container/${{ inputs.serviceName }}:${TAG}
       working-directory: ${{ github.workspace }}/devops/ui/${{ inputs.projectService }}/docker
       shell: pwsh
