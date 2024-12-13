@@ -132,7 +132,7 @@ jobs:
       if: always()
       run: |
         export BRANCH=$(echo "${BRANCH_NAME}" | tr '/: ' '_')
-        export TAG=$(echo "${TAG_NAME}")
+        export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
         
         echo "ACR Name: $ACR_NAME"
         echo "Service Name: $SERVICE_NAME"
