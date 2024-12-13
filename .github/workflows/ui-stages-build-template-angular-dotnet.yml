@@ -131,7 +131,7 @@ jobs:
         TAG: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
         SERVICE_NAME: ${{ inputs.serviceName }}
       run: |
-        docker login ${{ secrets.ACR_NAME }} --username ${{ secrets.ACR_USER_NAME }} --password ${{ secrets.ACR_PASSWORD }}    
+        docker login "acrsimplechaindev.azurecr.io" --username ${{ secrets.ACR_USERNAME }} --password ${{ secrets.ACR_PASSWORD }}    
         docker build . -t container/${SERVICE_NAME}:${TAG}
         docker tag container/${SERVICE_NAME}:${TAG} ${ACR_NAME}/container/${SERVICE_NAME}:${TAG}
         docker push ${ACR_NAME}/container/${SERVICE_NAME}:${TAG}
