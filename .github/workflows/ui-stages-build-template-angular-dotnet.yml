@@ -82,6 +82,11 @@ jobs:
     env:
       template: ../partial-templates/variables.yml
       buildConfiguration: Release
+      ACR_NAME: ${{ secrets.ACR_NAME }}
+      ACR_USER_NAME: ${{ secrets.ACR_USER_NAME }}
+      ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+      TAG: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
+      SERVICE_NAME: ${{ inputs.serviceName }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -124,16 +129,10 @@ jobs:
 
     - name: Docker build and push
       if: always()
-      env:
-        ACR_NAME: ${{ secrets.ACR_NAME }}
-        ACR_USER_NAME: ${{ secrets.ACR_USER_NAME }}
-        ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
-        TAG: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
-        SERVICE_NAME: ${{ inputs.serviceName }}
       run: |
-        docker login "acrsimplechaindev.azurecr.io" --username ${{ secrets.ACR_USERNAME }} --password ${{ secrets.ACR_PASSWORD }}    
+        docker login $ACR_NAME --username $ACR_USER_NAME --password $ACR_PASSWORD    
         docker build . -t container/${SERVICE_NAME}:${TAG}
         docker tag container/${SERVICE_NAME}:${TAG} ${ACR_NAME}/container/${SERVICE_NAME}:${TAG}
-        docker push ${ACR_NAME}/container/${SERVICE_NAME}:${TAG}
+        docker push $ACR_NAME/container/${SERVICE_NAME}:${TAG}
       working-directory: ${{ github.workspace }}/devops/ui/${{ inputs.projectService }}/docker
       shell: pwsh
