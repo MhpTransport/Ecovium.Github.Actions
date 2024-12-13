@@ -136,16 +136,11 @@ jobs:
     - name: Docker build and push
       if: always()
       run: |
-        export BRANCH=$(echo "${BRANCH_NAME}" | tr '/: ' '_')
         export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
-        
-        echo "ACR Name: $ACR_NAME"
-        echo "Service Name: $SERVICE_NAME"
-        echo "Tag: $TAG"
-        echo "Branch Name (cleaned): $BRANCH"        
+        export SERVICE=$(echo "${SERVICE_NAME}")     
 
         docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
-        docker build . -t container/${{ inputs.serviceName }}:"$TAG"
+        docker build . -t container/"$SERVICE":"$TAG"
         
         # docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
         # docker build . -t container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
