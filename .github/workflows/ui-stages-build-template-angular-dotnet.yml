@@ -18,6 +18,9 @@ on:
       projectCsprojPath:
         required: true
         type: string
+      tag:
+        required: true
+        type: string
 
 jobs:
 
@@ -120,4 +123,20 @@ jobs:
       if: always()
       run: |
         ls -R ${{ github.workspace }}/devops/ui/${{ inputs.projectService }}/docker/app/publish/
+      shell: pwsh
+
+    - name: Docker build and push
+      if: always()
+      env:
+        ACR_NAME: ${{ secrets.ACR_NAME }}
+        ACR_USER_NAME: ${{ secrets.ACR_USER_NAME }}
+        ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+        TAG: ${{ inputs.tag }}
+        SERVICE_NAME: ${{ inputs.serviceName }}
+      run: |
+        docker login $ACR_NAME --username $ACR_USER_NAME --password $ACR_PASSWORD    
+        docker build . -t container/$SERVICE_NAME:$TAG
+        docker tag container/$SERVICE_NAME:$TAG $ACR_NAME/container/$SERVICE_NAME:$TAG
+        docker push $ACR_NAME/container/$SERVICE_NAME:$TAG
+      working-directory: ${{ github.workspace }}/devops/ui/${{ inputs.projectService }}/docker
       shell: pwsh
