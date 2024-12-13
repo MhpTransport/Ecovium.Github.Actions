@@ -114,13 +114,10 @@ jobs:
       run: |
         dotnet publish \
         --configuration ${{ env.buildConfiguration }} \
-        -o /home/runner/work/MHP.Portal.App/MHP.Portal.App/devops/ui/MHP.Portal.App/docker/app/publish/
+        -o ${{ github.workspace }}/devops/ui/${{ inputs.projectService }}/docker/app/publish/
 
     - name: List files in app/publish
       if: always()
       run: |
-        # pwd
-        # ls -lrt
-        # echo "github.workspace : ${{ github.workspace }}"
-        ls -R /home/runner/work/MHP.Portal.App/MHP.Portal.App/devops/ui/MHP.Portal.App/docker/app/publish/
+        ls -R ${{ github.workspace }}/devops/ui/${{ inputs.projectService }}/docker/app/publish/
       shell: pwsh
