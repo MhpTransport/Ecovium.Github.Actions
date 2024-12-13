@@ -131,8 +131,8 @@ jobs:
     - name: Docker build and push
       if: always()
       run: |
-        BRANCH=$(echo "${BRANCH_NAME}" | tr '/: ' '_')
-        TAG=$(echo "${TAG_NAME}")
+        export BRANCH=$(echo "${BRANCH_NAME}" | tr '/: ' '_')
+        export TAG=$(echo "${TAG_NAME}")
         
         echo "ACR Name: $ACR_NAME"
         echo "Service Name: $SERVICE_NAME"
