@@ -118,14 +118,19 @@ jobs:
     - name: Dotnet Publish
       if: always()
       run: |
+        # dotnet publish \
+        # --configuration ${{ env.buildConfiguration }} \
+        # -o ${{ github.workspace }}/devops/ui/${{ inputs.projectService }}/docker/app/publish/
+
         dotnet publish \
         --configuration ${{ env.buildConfiguration }} \
-        -o ${{ github.workspace }}/devops/ui/${{ inputs.projectService }}/docker/app/publish/
+        -o ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/
 
     - name: List files in app/publish
       if: always()
       run: |
-        ls -R ${{ github.workspace }}/devops/ui/${{ inputs.projectService }}/docker/app/publish/
+        # ls -R ${{ github.workspace }}/devops/ui/${{ inputs.projectService }}/docker/app/publish/
+        ls -R ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/
       shell: pwsh
 
     - name: Docker build and push
