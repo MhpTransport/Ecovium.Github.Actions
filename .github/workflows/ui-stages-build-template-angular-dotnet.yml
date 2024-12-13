@@ -128,10 +128,9 @@ jobs:
     - name: Docker build and push
       if: always()
       run: |
-        find . -name Dockerfile
-        # docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"    
-        # docker build . -t container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.main.${{ github.sha }}
-        # docker tag container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.main.${{ github.sha }} "$ACR_NAME"/container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.main.${{ github.sha }}
-        # docker push "$ACR_NAME"/container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.main.${{ github.sha }}
-      # working-directory: ${{ github.workspace }}/devops/ui/${{ inputs.projectService }}/docker
+        docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"    
+        docker build . -t container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
+        docker tag container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }} "$ACR_NAME"/container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
+        docker push "$ACR_NAME"/container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
+      working-directory: ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker
       shell: pwsh
