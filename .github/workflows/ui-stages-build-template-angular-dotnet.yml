@@ -115,6 +115,13 @@ jobs:
         dotnet publish \
         --configuration ${{ env.buildConfiguration }} \
         -o devops/ui/${{ inputs.projectService }}/docker/app/publish
+
+    - name: List files in app/publish
+      if: always()
+      run: |
+        ls -R devops/ui/${{ inputs.serviceName }}/docker/app/publish
+      shell: pwsh
+
         
 #   build:
 #     name: Build
