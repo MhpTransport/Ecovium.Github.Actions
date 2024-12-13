@@ -146,4 +146,3 @@ jobs:
         # docker tag container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }} acrsimplechaindev.azurecr.io/container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
         # docker push acrsimplechaindev.azurecr.io/container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
       working-directory: ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker
-      shell: pwsh
