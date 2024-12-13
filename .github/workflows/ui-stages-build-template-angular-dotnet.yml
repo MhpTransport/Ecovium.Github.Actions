@@ -135,10 +135,10 @@ jobs:
         export ACR=$(echo "${ACR_NAME}")
 
         echo "ACR Value : $ACR"
-        echo "Push Value : '$ACR'/container/'$SERVICE':'$TAG' "
+        echo "Push Value : $ACR/container/$SERVICE:$TAG "
 
         docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
         docker build . -t container/"$SERVICE":"$TAG"
-        docker tag container/"$SERVICE":"$TAG" '$ACR'/container/'$SERVICE':'$TAG'
+        docker tag container/"$SERVICE":"$TAG" $ACR/container/$SERVICE:$TAG
         # docker push "$ACR"/container/"$SERVICE":"$TAG"
       working-directory: ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker
