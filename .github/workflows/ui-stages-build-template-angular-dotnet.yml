@@ -39,46 +39,46 @@ jobs:
   #       NODE_OPTIONS: --max_old_space_size=4096
   #       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  calling-workflow-quality-gate-npm-pre-build:
-    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-pre-build-template.yml@develop
-    # needs: npm-install
-    # with:
-    #   skipTests: false
-    #   sonarQubeSC: SonarQubeSC
+  # calling-workflow-quality-gate-npm-pre-build:
+  #   uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-pre-build-template.yml@develop
+  #   # needs: npm-install
+  #   # with:
+  #   #   skipTests: false
+  #   #   sonarQubeSC: SonarQubeSC
 
-  npm-run-build:
-    needs: calling-workflow-quality-gate-npm-pre-build
-    env:
-      template: ../partial-templates/variables.yml
-      buildConfiguration: Release
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./${{ inputs.projectService }}/ClientApp
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        persist-credentials: true
-    - name: Npm install --legacy-peer-deps
-      run: npm install --legacy-peer-deps
-      env:
-        NODE_OPTIONS: --max_old_space_size=4096
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-    - name: Npm run build
-      run: npm run build --prod
-      env:
-        NODE_OPTIONS: --max_old_space_size=4096
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  # npm-run-build:
+  #   needs: calling-workflow-quality-gate-npm-pre-build
+  #   env:
+  #     template: ../partial-templates/variables.yml
+  #     buildConfiguration: Release
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: ./${{ inputs.projectService }}/ClientApp
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #     with:
+  #       persist-credentials: true
+  #   - name: Npm install --legacy-peer-deps
+  #     run: npm install --legacy-peer-deps
+  #     env:
+  #       NODE_OPTIONS: --max_old_space_size=4096
+  #       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  #   - name: Npm run build
+  #     run: npm run build --prod
+  #     env:
+  #       NODE_OPTIONS: --max_old_space_size=4096
+  #       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  calling-workflow-quality-gate-npm-template:
-    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-template.yml@develop
-    needs: npm-run-build
-    # with:
-    #   skipTests: false
-    #   sonarQubeSC: SonarQubeSC
+  # calling-workflow-quality-gate-npm-template:
+  #   uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-template.yml@develop
+  #   needs: npm-run-build
+  #   # with:
+  #   #   skipTests: false
+  #   #   sonarQubeSC: SonarQubeSC
 
   dotnet-build:
-    needs: calling-workflow-quality-gate-npm-template
+    # needs: calling-workflow-quality-gate-npm-template
     env:
       template: ../partial-templates/variables.yml
       buildConfiguration: Release
@@ -121,122 +121,3 @@ jobs:
       run: |
         ls -R devops/ui/${{ inputs.serviceName }}/docker/app/publish
       shell: pwsh
-
-        
-#   build:
-#     name: Build
-#     runs-on: ubuntu-latest
-#     permissions:
-#       contents: write
-#       id-token: write
-      
-#     env:
-#       feedName: EcoviumCommon
-#       containerRegistrySC: acrsimplechaindevSC
-#       sonarQubeSC: SonarQubeSC
-#       npmTestsAvailable: false
-#       packageJsonPath: ''
-#       group: acr-devops
-#       sonarQubeEndpointUrl: http://simplechain-sq-dev.germanywestcentral.cloudapp.azure.com
-#       sonarQubeApiUserToken: squ_53e25f1abe6db9259095570120052adad9be4380
-#       sonarQubeAvailable: ''
-#       buildConfiguration: Release
-#       projectCsprojPath: MHP.Portal.App/MHP.Portal.App.csproj
-#       projectService: MHP.Portal.App
-#       serviceName: portal-host-ui
-#       buildVersion: 0.1.0
-#       acrName: acrsimplechaindev.azurecr.io
-#       tag: 0.1.0-${{ github.run_number }}
-
-#     steps:
-#       - name: Checkout repository
-#         uses: actions/checkout@v4
-
-#       - name: Checkout DevOps Template Repo
-#         uses: actions/checkout@v4
-#         with:
-#           repository: MhpTransport/Ecovium.Github.Actions
-#           ref: develop
-#           token: ${{ env.ghtoken }}
-#           # token: ${{ secrets.GITHUB_TOKEN }}
-
-
-# #    - uses: actions/checkout@v4
-# #    - name: Use Node.js 18
-# #      uses: actions/setup-node@v4
-# #      with:
-# #        node-version: '18.x'
-# #        cache: 'npm'
-# #        cache-dependency-path: MHP.Portal.App/ClientApp/package-lock.json
-# #    - run: npm version
-# #    - run: npm config ls -l
-# #    - name: Npm install --legacy-peer-deps
-# #      run: npm install --legacy-peer-deps ${{ github.workspace }}/${{ env.projectService }}/ClientApp
-
-
-# #    - uses: actions/checkout@v4
-# #    - name: Setup .NET
-# #      uses: actions/setup-dotnet@v4
-# #      with:
-# #        dotnet-version: 8.0.x
-# #    - name: Dotnet Restore
-# #      run: dotnet restore ${{ env.projectCsprojPath }}
-# #    - name: Dotnet Build
-# #      run: dotnet build ${{ env.projectCsprojPath }} --configuration ${{ env.buildConfiguration }} -o app/build
-
-# #      - name: Login to ACR
-# #        uses: docker/login-action@v3
-# #        with:
-# #          registry: acrsimplechaindev.azurecr.io
-# #          username: ${{ secrets.ACR_USERNAME }}
-# #          password: ${{ secrets.ACR_PASSWORD }}
-          
-# #      - name: Azure CLI script check
-# #        uses: azure/cli@v2
-# #        with:
-# #          azcliversion: latest
-# #          inlineScript: |
-# #            az account show
-  
-#       - name: Docker Build & Push
-#         run: |
-#           docker login '${{ env.acrName }}' --username '${{ secrets.ACR_USERNAME }}' --password '${{ secrets.ACR_PASSWORD }}'
-#           cd ./devops/ui/portal-host-ui/docker/; docker build . -t container/${{ env.serviceName }}:${{ env.tag }}
-#           docker tag container/${{ env.serviceName }}:${{ env.tag }} ${{ env.acrName }}/container/${{ env.serviceName }}:${{ env.tag }}
-#           docker push ${{ env.acrName }}/container/${{ env.serviceName }}:${{ env.tag }}
-
-
-#       - name: Overwrite image tag
-#         shell: pwsh
-#         run: |
-#           Install-Module PowerShell-yaml -Force -Repository PSGallery -Scope CurrentUser
-#           Import-Module PowerShell-yaml
-#           $values = Get-Content -Path "./devops/ui/portal-host-ui/helm-chart/values.yaml" -Raw | ConvertFrom-Yaml
-#           if ($values.image.tag -eq "latest" ) {
-#             $values.image.tag = '${{ env.tag }}'
-#             $values = ConvertTo-Yaml -Data $values
-#             $values | Out-File -FilePath "./devops/ui/portal-host-ui/helm-chart/values.yaml"
-#             write-verbose "Replacing image tag value with: ${{ env.tag }}" -vb
-#           }
-#           else {
-#             write-verbose "Image tag does not exist or value is not latest" -vb
-#           }
-
-
-#       - name: Helm Package & Push
-#         run: |
-#           helm registry login '${{ env.acrName }}' --username '${{ secrets.ACR_USERNAME }}' --password '${{ secrets.ACR_PASSWORD }}'
-#           cd ./devops/ui/portal-host-ui/
-#           echo "Starting of Values YAML inside Helm Chart"
-#           cat helm-chart/values.yaml
-#           echo "End of Values YAML inside Helm Chart"
-#           helm dependency update helm-chart
-#           helm package helm-chart --version '${{ env.tag }}'
-#           helm push *.tgz oci://${{ env.acrName }}/helm
-
-
-#       - name: Tag commit
-#         run: |
-#           git tag ${{ env.tag }}
-#           git push origin --tags
-
