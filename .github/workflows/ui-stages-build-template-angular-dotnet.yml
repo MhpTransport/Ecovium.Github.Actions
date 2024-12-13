@@ -85,6 +85,9 @@ jobs:
       ACR_NAME: ${{ secrets.ACR_NAME }}
       ACR_USER_NAME: ${{ secrets.ACR_USER_NAME }}
       ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+      BRANCH_NAME: ${{ github.ref_name }}
+      TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
+      SERVICE_NAME: ${{ inputs.serviceName }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -128,10 +131,19 @@ jobs:
     - name: Docker build and push
       if: always()
       run: |
-        docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
-        # docker login "${{ secrets.ACR_NAME }}" --username "${{ secrets.ACR_USER_NAME }}" --password "${{ secrets.ACR_PASSWORD }}"
-        docker build . -t container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
-        docker tag container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }} acrsimplechaindev.azurecr.io/container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
-        docker push acrsimplechaindev.azurecr.io/container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
+        BRANCH=$(echo "${BRANCH_NAME}" | tr '/: ' '_')
+        TAG=$(echo "${TAG_NAME}")
+        
+        echo "ACR Name: $ACR_NAME"
+        echo "Service Name: $SERVICE_NAME"
+        echo "Tag: $TAG"
+        echo "Branch Name (cleaned): $BRANCH"        
+
+        echo "docker login $ACR_NAME --username $ACR_USER_NAME --password $ACR_PASSWORD "
+        
+        # docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
+        # docker build . -t container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
+        # docker tag container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }} acrsimplechaindev.azurecr.io/container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
+        # docker push acrsimplechaindev.azurecr.io/container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
       working-directory: ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker
       shell: pwsh
