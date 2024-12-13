@@ -119,5 +119,5 @@ jobs:
     - name: List files in app/publish
       if: always()
       run: |
-        ls -R devops/ui/${{ inputs.serviceName }}/docker/app/publish
+        ls -R ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish
       shell: pwsh
