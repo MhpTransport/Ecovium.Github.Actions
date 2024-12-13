@@ -131,10 +131,11 @@ jobs:
       if: always()
       run: |
         export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
-        export SERVICE=$(echo "${SERVICE_NAME}")     
+        export SERVICE=$(echo "${SERVICE_NAME}")
+        export ACR=$(echo "${ACR_NAME}")
 
         docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
         docker build . -t container/"$SERVICE":"$TAG"
-        docker tag container/"$SERVICE":"$TAG" "$ACR_NAME"/container/"$SERVICE":"$TAG"
-        docker push "$ACR_NAME"/container/"$SERVICE":"$TAG"
+        docker tag container/"$SERVICE":"$TAG" "$ACR"/container/"$SERVICE":"$TAG"
+        docker push "$ACR"/container/"$SERVICE":"$TAG"
       working-directory: ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker
