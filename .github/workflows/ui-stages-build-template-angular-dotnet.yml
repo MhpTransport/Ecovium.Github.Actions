@@ -139,8 +139,8 @@ jobs:
         echo "Tag: $TAG"
         echo "Branch Name (cleaned): $BRANCH"        
 
-        docker login '$ACR_NAME' --username '$ACR_USER_NAME' --password '$ACR_PASSWORD'
-        docker build . -t container/${{ inputs.serviceName }}:$TAG
+        docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
+        docker build . -t container/${{ inputs.serviceName }}:"$TAG"
         
         # docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
         # docker build . -t container/${{ inputs.serviceName }}:${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
