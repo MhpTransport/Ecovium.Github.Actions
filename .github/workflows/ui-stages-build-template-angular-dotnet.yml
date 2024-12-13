@@ -82,11 +82,9 @@ jobs:
     env:
       template: ../partial-templates/variables.yml
       buildConfiguration: Release
-      ACR_NAME: ${{ secrets.ACR_NAME }}
       ACR_USER_NAME: ${{ secrets.ACR_USER_NAME }}
       ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
-      # TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
-      TAG_NAME: "gh-test-v1"      
+      TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}    
       SERVICE_NAME: ${{ inputs.serviceName }}
     runs-on: ubuntu-latest
     steps:
@@ -133,13 +131,9 @@ jobs:
       run: |
         export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
         export SERVICE=$(echo "${SERVICE_NAME}")
-        export ACR=$(echo "${ACR_NAME}")
 
-        echo "ACR Value : $ACR"
-        echo "Push Value : $ACR/container/$SERVICE:$TAG "
-
-        docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
+        docker login "acrsimplechaindev.azurecr.io" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
         docker build . -t container/"$SERVICE":"$TAG"
-        docker tag container/"$SERVICE":"$TAG" "$ACR"/container/"$SERVICE":"$TAG"
-        docker push "$ACR"/container/"$SERVICE":"$TAG"
+        docker tag container/"$SERVICE":"$TAG" acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
+        docker push acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
       working-directory: ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker
