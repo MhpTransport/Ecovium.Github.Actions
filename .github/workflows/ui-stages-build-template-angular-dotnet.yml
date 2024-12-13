@@ -130,7 +130,7 @@ jobs:
     - name: Docker build and push
       if: always()
       run: |
-        docker login $ACR_NAME --username $ACR_USER_NAME --password $ACR_PASSWORD    
+        docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"    
         docker build . -t container/${SERVICE_NAME}:${TAG}
         docker tag container/${SERVICE_NAME}:${TAG} ${ACR_NAME}/container/${SERVICE_NAME}:${TAG}
         docker push $ACR_NAME/container/${SERVICE_NAME}:${TAG}
