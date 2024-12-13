@@ -132,7 +132,7 @@ jobs:
         export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
         export SERVICE=$(echo "${SERVICE_NAME}")
 
-        docker login "acrsimplechaindev.azurecr.io" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
+        docker login acrsimplechaindev.azurecr.io --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
         docker build . -t container/"$SERVICE":"$TAG"
         docker tag container/"$SERVICE":"$TAG" acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
         docker push acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
