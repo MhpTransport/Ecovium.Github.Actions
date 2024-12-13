@@ -131,8 +131,8 @@ jobs:
       if: always()
       run: |
         docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"    
-        docker build . -t container/${{ inputs.serviceName }}:${TAG}
-        docker tag container/${{ inputs.serviceName }}:${TAG} $ACR_NAME/container/${{ inputs.serviceName }}:${TAG}
-        docker push $ACR_NAME/container/${{ inputs.serviceName }}:${TAG}
+        docker build . -t container/${{ inputs.serviceName }}:$TAG
+        docker tag container/${{ inputs.serviceName }}:$TAG $ACR_NAME/container/${{ inputs.serviceName }}:$TAG
+        docker push $ACR_NAME/container/${{ inputs.serviceName }}:$TAG
       working-directory: ${{ github.workspace }}/devops/ui/${{ inputs.projectService }}/docker
       shell: pwsh
