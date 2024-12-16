@@ -143,6 +143,9 @@ jobs:
     - uses: azure/login@v2
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS_ACR }}'
+        client-id: '99b83713-5337-42d0-ba12-e6ca52bf4bed'
+        tenant-id: 'a20b4497-21aa-49b1-9fac-f5d256ab7f35'
+        auth-type: IDENTITY
 
     - name: Azure CLI script
       uses: azure/cli@v2
