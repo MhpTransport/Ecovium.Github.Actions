@@ -155,9 +155,9 @@ jobs:
         inlineScript: |
           az account show
 
-    # # Log in to Azure Container Registry
-    # - name: Log in to Azure Container Registry
-    #   run: az acr login --name acrsimplechaindev.azurecr.io
+    # Log in to Azure Container Registry
+    - name: Log in to Azure Container Registry
+      run: az acr login --name acrsimplechaindev.azurecr.io
 
     - name: Docker build and push
       if: always()
