@@ -89,7 +89,6 @@ jobs:
       SERVICE_NAME: ${{ inputs.serviceName }}
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-      AZURE_CREDENTIALS_ACR: ${{ secrets.AZURE_CREDENTIALS_ACR }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -140,7 +139,7 @@ jobs:
     - name: Log in to Azure CLI
       uses: azure/login@v1
       with:
-        creds: "$AZURE_CREDENTIALS_ACR"
+        creds: ${{ secrets.AZURE_CREDENTIALS_ACR }}
 
     # Log in to Azure Container Registry
     - name: Log in to Azure Container Registry
