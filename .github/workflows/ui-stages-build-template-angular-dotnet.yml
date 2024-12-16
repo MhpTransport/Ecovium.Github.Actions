@@ -99,46 +99,39 @@ jobs:
       with:
         persist-credentials: true
 
-    # - uses: actions/setup-dotnet@v4
-    #   with:
-    #     dotnet-version: '8.x.x'
+    - uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.x.x'
 
-    # - name: Remove existing NuGet source
-    #   run: |
-    #     dotnet nuget remove source EcoviumCommon || echo "Source not found, skipping removal"
+    - name: Remove existing NuGet source
+      run: |
+        dotnet nuget remove source EcoviumCommon || echo "Source not found, skipping removal"
 
-    # - name: Dotnet restore
-    #   run: dotnet restore ${{ inputs.projectCsprojPath }}
-    #   env:
-    #     NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    - name: Dotnet restore
+      run: dotnet restore ${{ inputs.projectCsprojPath }}
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-    # - name: List Nuget Sources
-    #   run: dotnet nuget list source
+    - name: List Nuget Sources
+      run: dotnet nuget list source
 
-    # - name: Dotnet Build
-    #   run: dotnet build ${{ inputs.projectCsprojPath }} --configuration ${{ env.buildConfiguration }} -o app/build
-    #   env:
-    #     NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    - name: Dotnet Build
+      run: dotnet build ${{ inputs.projectCsprojPath }} --configuration ${{ env.buildConfiguration }} -o app/build
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-    # - name: Dotnet Publish
-    #   if: always()
-    #   run: |
-    #     dotnet publish \
-    #     --configuration ${{ env.buildConfiguration }} \
-    #     -o ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/
+    - name: Dotnet Publish
+      if: always()
+      run: |
+        dotnet publish \
+        --configuration ${{ env.buildConfiguration }} \
+        -o ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/
 
-    # - name: List files in app/publish
-    #   if: always()
-    #   run: |
-    #     ls -R ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/
-    #   shell: pwsh
-
-    # - name: Login to ACR
-    #   uses: docker/login-action@v3
-    #   with:
-    #     registry: acrsimplechaindev.azurecr.io
-    #     username: "$AZURE_CLIENT_ID"
-    #     password: "$AZURE_CLIENT_SECRET"
+    - name: List files in app/publish
+      if: always()
+      run: |
+        ls -R ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/
+      shell: pwsh
 
     - uses: azure/login@v2
       with:
@@ -148,12 +141,12 @@ jobs:
         # subscription-id: '7ae7d6f7-74b7-4165-a38e-6cfc79f940b0'
         # auth-type: 'SERVICE_PRINCIPAL'
 
-    - name: Azure CLI script
-      uses: azure/cli@v2
-      with:
-        azcliversion: latest
-        inlineScript: |
-          az account show
+    # - name: Azure CLI script
+    #   uses: azure/cli@v2
+    #   with:
+    #     azcliversion: latest
+    #     inlineScript: |
+    #       az account show
 
     # - name: Log in to Azure CLI
     #   uses: azure/login@v2
@@ -175,15 +168,15 @@ jobs:
     # - name: Log in to Azure Container Registry
     #   run: az acr login --name acrsimplechaindev.azurecr.io
 
-    # - name: Docker build and push
-    #   if: always()
-    #   run: |
-    #     export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
-    #     export SERVICE=$(echo "${SERVICE_NAME}")
+    - name: Docker build and push
+      if: always()
+      run: |
+        export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
+        export SERVICE=$(echo "${SERVICE_NAME}")
 
-    #     # az account set --subscription 7ae7d6f7-74b7-4165-a38e-6cfc79f940b0
-    #     # docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
-    #     docker build . -t container/"$SERVICE":"$TAG"
-    #     docker tag container/"$SERVICE":"$TAG" acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
-    #     docker push acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
-    #   working-directory: ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker
+        # az account set --subscription 7ae7d6f7-74b7-4165-a38e-6cfc79f940b0
+        # docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
+        docker build . -t container/"$SERVICE":"$TAG"
+        docker tag container/"$SERVICE":"$TAG" acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
+        docker push acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
+      working-directory: ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker
