@@ -20,13 +20,15 @@ on:
         type: string
     secrets:
       AZURE_CLIENT_ID:
-        required: false
+        required: true
       AZURE_CLIENT_SECRET:
-        required: false
+        required: true
       AZURE_SUBSCRIPTION_ID_ACR:
-        required: false
+        required: true
       AZURE_TENANT_ID:
-        required: false
+        required: true
+      NPM_TOKEN:
+        required: true
 
 permissions:
   id-token: write
@@ -34,64 +36,64 @@ permissions:
 
 jobs:
 
-  # npm-install:
-  #   env:
-  #     template: ../partial-templates/variables.yml
-  #     buildConfiguration: Release
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: ./${{ inputs.projectService }}/ClientApp
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #     with:
-  #       persist-credentials: true
-  #   - name: Npm install --legacy-peer-deps
-  #     run: npm install --legacy-peer-deps 
-  #     env:
-  #       NODE_OPTIONS: --max_old_space_size=4096
-  #       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  npm-install:
+    env:
+      template: ../partial-templates/variables.yml
+      buildConfiguration: Release
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./${{ inputs.projectService }}/ClientApp
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: true
+    - name: Npm install --legacy-peer-deps
+      run: npm install --legacy-peer-deps 
+      env:
+        NODE_OPTIONS: --max_old_space_size=4096
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  # calling-workflow-quality-gate-npm-pre-build:
-  #   uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-pre-build-template.yml@develop
-  #   # needs: npm-install
-  #   # with:
-  #   #   skipTests: false
-  #   #   sonarQubeSC: SonarQubeSC
+  calling-workflow-quality-gate-npm-pre-build:
+    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-pre-build-template.yml@develop
+    needs: npm-install
+    # with:
+    #   skipTests: false
+    #   sonarQubeSC: SonarQubeSC
 
-  # npm-run-build:
-  #   needs: calling-workflow-quality-gate-npm-pre-build
-  #   env:
-  #     template: ../partial-templates/variables.yml
-  #     buildConfiguration: Release
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: ./${{ inputs.projectService }}/ClientApp
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #     with:
-  #       persist-credentials: true
-  #   - name: Npm install --legacy-peer-deps
-  #     run: npm install --legacy-peer-deps
-  #     env:
-  #       NODE_OPTIONS: --max_old_space_size=4096
-  #       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-  #   - name: Npm run build
-  #     run: npm run build --prod
-  #     env:
-  #       NODE_OPTIONS: --max_old_space_size=4096
-  #       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  npm-run-build:
+    needs: calling-workflow-quality-gate-npm-pre-build
+    env:
+      template: ../partial-templates/variables.yml
+      buildConfiguration: Release
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./${{ inputs.projectService }}/ClientApp
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: true
+    - name: Npm install --legacy-peer-deps
+      run: npm install --legacy-peer-deps
+      env:
+        NODE_OPTIONS: --max_old_space_size=4096
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    - name: Npm run build
+      run: npm run build --prod
+      env:
+        NODE_OPTIONS: --max_old_space_size=4096
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  # calling-workflow-quality-gate-npm-template:
-  #   uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-template.yml@develop
-  #   needs: npm-run-build
-  #   # with:
-  #   #   skipTests: false
-  #   #   sonarQubeSC: SonarQubeSC
+  calling-workflow-quality-gate-npm-template:
+    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-template.yml@develop
+    needs: npm-run-build
+    # with:
+    #   skipTests: false
+    #   sonarQubeSC: SonarQubeSC
 
   dotnet-build:
-    # needs: calling-workflow-quality-gate-npm-template
+    needs: calling-workflow-quality-gate-npm-template
     env:
       template: ../partial-templates/variables.yml
       buildConfiguration: Release
