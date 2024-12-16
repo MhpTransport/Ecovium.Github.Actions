@@ -87,6 +87,8 @@ jobs:
       ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
       TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}    
       SERVICE_NAME: ${{ inputs.serviceName }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -131,8 +133,8 @@ jobs:
       uses: docker/login-action@v3
       with:
         registry: acrsimplechaindev.azurecr.io
-        username: ${{ secrets.AZURE_CLIENT_ID }}
-        password: ${{ secrets.AZURE_CLIENT_SECRET }}
+        username: "$AZURE_CLIENT_ID"
+        password: "$AZURE_CLIENT_SECRET"
 
     - name: Docker build and push
       if: always()
