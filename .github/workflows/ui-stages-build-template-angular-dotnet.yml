@@ -20,13 +20,13 @@ on:
         type: string
     secrets:
       AZURE_CLIENT_ID:
-        required: true
+        required: false
       AZURE_CLIENT_SECRET:
-        required: true
+        required: false
       AZURE_SUBSCRIPTION_ID_ACR:
-        required: true
+        required: false
       AZURE_TENANT_ID:
-        required: true
+        required: false
 
 permissions:
   id-token: write
