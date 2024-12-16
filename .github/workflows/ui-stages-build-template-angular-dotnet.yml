@@ -164,9 +164,9 @@ jobs:
     #     inlineScript: |
     #       az account show
 
-    # # Log in to Azure Container Registry
-    # - name: Log in to Azure Container Registry
-    #   run: az acr login --name acrsimplechaindev.azurecr.io
+    # Log in to Azure Container Registry
+    - name: Log in to Azure Container Registry
+      run: az acr login --name acrsimplechaindev.azurecr.io
 
     - name: Docker build and push
       if: always()
@@ -174,8 +174,7 @@ jobs:
         export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
         export SERVICE=$(echo "${SERVICE_NAME}")
 
-        # az account set --subscription 7ae7d6f7-74b7-4165-a38e-6cfc79f940b0
-        # docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
+        docker login "acrsimplechaindev.azurecr.io" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
         docker build . -t container/"$SERVICE":"$TAG"
         docker tag container/"$SERVICE":"$TAG" acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
         docker push acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
