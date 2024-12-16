@@ -89,6 +89,7 @@ jobs:
       SERVICE_NAME: ${{ inputs.serviceName }}
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      AZURE_CREDENTIALS_ACR: ${{ secrets.AZURE_CREDENTIALS_ACR }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -129,12 +130,21 @@ jobs:
         ls -R ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/
       shell: pwsh
 
-    - name: Login to ACR
-      uses: docker/login-action@v3
+    # - name: Login to ACR
+    #   uses: docker/login-action@v3
+    #   with:
+    #     registry: acrsimplechaindev.azurecr.io
+    #     username: "$AZURE_CLIENT_ID"
+    #     password: "$AZURE_CLIENT_SECRET"
+
+    - name: Log in to Azure CLI
+      uses: azure/login@v1
       with:
-        registry: acrsimplechaindev.azurecr.io
-        username: "$AZURE_CLIENT_ID"
-        password: "$AZURE_CLIENT_SECRET"
+        creds: "$AZURE_CREDENTIALS_ACR"
+
+    # Log in to Azure Container Registry
+    - name: Log in to Azure Container Registry
+      run: az acr login --name acrsimplechaindev.azurecr.io
 
     - name: Docker build and push
       if: always()
@@ -143,7 +153,7 @@ jobs:
         export SERVICE=$(echo "${SERVICE_NAME}")
 
         # az account set --subscription 7ae7d6f7-74b7-4165-a38e-6cfc79f940b0
-        docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
+        # docker login "$ACR_NAME" --username "$ACR_USER_NAME" --password "$ACR_PASSWORD"
         docker build . -t container/"$SERVICE":"$TAG"
         docker tag container/"$SERVICE":"$TAG" acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
         docker push acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
