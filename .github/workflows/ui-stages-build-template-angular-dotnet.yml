@@ -147,7 +147,7 @@ jobs:
         name: dist-folder-npm
     - shell: bash
       run: |
-        cp -r dist ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/${{ inputs.projectService }}/
+        cp -r ${{ github.workspace }}/dist ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/${{ inputs.projectService }}/
 
     - name: List files in app/publish
       if: always()
