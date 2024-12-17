@@ -156,13 +156,14 @@ jobs:
         ls -R ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish
       shell: pwsh
 
+    # Login to ACR
     - uses: azure/login@v2
       with:
         creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID_ACR }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
-
     - name: Log in to Azure Container Registry
       run: az acr login --name acrsimplechaindev
 
+    # Docker Build & Push
     - name: Docker build and push
       if: always()
       run: |
@@ -173,3 +174,30 @@ jobs:
         docker tag container/"$SERVICE":"$TAG" acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
         docker push acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
       working-directory: ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker
+
+    # Overwrite image tag in values.yaml
+    - name: Overwrite image tag
+      if: always()
+      shell: pwsh
+      run: |
+        Install-Module PowerShell-yaml -Force -Repository PSGallery -Scope CurrentUser
+        Import-Module PowerShell-yaml
+        $values = Get-Content -Path "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/helm-chart/values.yaml" -Raw | ConvertFrom-Yaml
+        if ($values.image.tag -eq "latest") {
+          $values.image.tag = '${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}'
+          $values = ConvertTo-Yaml -Data $values
+          $values | Out-File -FilePath "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/helm-chart/values.yaml"
+          Write-Verbose "Replacing image tag value with: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}" -Verbose
+        } else {
+          Write-Verbose "Image tag does not exist or value is not latest" -Verbose
+        }
+
+    # Helm Login and Package
+    - name: Helm Login and Package
+      if: always()
+      run: |
+        export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
+        
+        helm dependency update helm-chart
+        helm package helm-chart --version "$TAG"
+      working-directory: "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}"
