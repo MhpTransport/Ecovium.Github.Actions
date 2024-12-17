@@ -91,7 +91,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: dist-folder-npm
-        path: dist
+        path: ./dist
 
   calling-workflow-quality-gate-npm-template:
     uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-template.yml@develop
