@@ -180,26 +180,27 @@ jobs:
       if: always()
       shell: pwsh
       run: |
-        $env:TAG = $env:TAG_NAME -replace '/', '_'
-        
-        Install-Module PowerShell-yaml -Force -Repository PSGallery -Scope CurrentUser
-        Import-Module PowerShell-yaml
-        $values = Get-Content -Path "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/helm-chart/values.yaml" -Raw | ConvertFrom-Yaml
-        if ($values.image.tag -eq "latest") {
-          $values.image.tag = '$env:TAG'
-          $values = ConvertTo-Yaml -Data $values
-          $values | Out-File -FilePath "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/helm-chart/values.yaml"
-          Write-Verbose "Replacing image tag value with: $env:TAG" -Verbose
-        } else {
-          Write-Verbose "Image tag does not exist or value is not latest" -Verbose
-        }
+        $env:TAG = $env:TAG_NAME -replace '/', '_' -replace '[^a-zA-Z0-9._\-]', ''
+        Write-Output "Updated TAG: $env:TAG"
+
+        # Install-Module PowerShell-yaml -Force -Repository PSGallery -Scope CurrentUser
+        # Import-Module PowerShell-yaml
+        # $values = Get-Content -Path "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/helm-chart/values.yaml" -Raw | ConvertFrom-Yaml
+        # if ($values.image.tag -eq "latest") {
+        #   $values.image.tag = '$env:TAG'
+        #   $values = ConvertTo-Yaml -Data $values
+        #   $values | Out-File -FilePath "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/helm-chart/values.yaml"
+        #   Write-Verbose "Replacing image tag value with: $env:TAG" -Verbose
+        # } else {
+        #   Write-Verbose "Image tag does not exist or value is not latest" -Verbose
+        # }
 
     # Helm Login and Package
     - name: Helm Login and Package
       if: always()
       run: |
         export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
-        
-        helm dependency update helm-chart
-        helm package helm-chart --version "$TAG"
+        echo "TAG Value : $TAG "
+        # helm dependency update helm-chart
+        # helm package helm-chart --version "$TAG"
       working-directory: "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}"
