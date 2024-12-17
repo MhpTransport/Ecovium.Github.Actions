@@ -145,16 +145,10 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: dist-folder-npm
-        path: ${{ github.workspace }}/dist
+        path: ${{ github.workspace }}/ClientApp/dist
     - shell: bash
       run: |
-        # cp -r ${{ github.workspace }}/dist ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/${{ inputs.projectService }}/
-        echo "Check folders inside ${{ github.workspace }}"
-        ls -lrt ${{ github.workspace }}
-        # echo "Check folders inside ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/ "
-        # ls -lrt ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/
-        # echo "Check folders inside ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/${{ inputs.projectService }}/ "
-        # ls -lrt ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/${{ inputs.projectService }}/
+        cp -r ${{ github.workspace }}/ClientApp ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/
 
     - name: List files in app/publish
       if: always()
