@@ -74,16 +74,24 @@ jobs:
     - uses: actions/checkout@v4
       with:
         persist-credentials: true
+        
     - name: Npm install --legacy-peer-deps
       run: npm install --legacy-peer-deps
       env:
         NODE_OPTIONS: --max_old_space_size=4096
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
     - name: Npm run build
       run: npm run build --prod
       env:
         NODE_OPTIONS: --max_old_space_size=4096
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
+    - name: Upload dist post npm build
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist-folder-npm
+        path: dist
 
   calling-workflow-quality-gate-npm-template:
     uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-template.yml@develop
@@ -132,6 +140,14 @@ jobs:
         dotnet publish \
         --configuration ${{ env.buildConfiguration }} \
         -o ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/
+
+    - name: Download dist from npm build
+      uses: actions/download-artifact@v4
+      with:
+        name: dist-folder-npm
+    - shell: bash
+      run: |
+        cp -r dist ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/${{ inputs.projectService }}/
 
     - name: List files in app/publish
       if: always()
