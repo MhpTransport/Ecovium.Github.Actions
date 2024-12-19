@@ -21,10 +21,8 @@ jobs:
   quality-gate-npm-prebuild:
     needs: calling-workflow-quality-gate-pre-build
     runs-on: ubuntu-latest
-    env:
-      # sonarQubeEndpointUrl: http://simplechain-sq-dev.germanywestcentral.cloudapp.azure.com
-      # sonarQubeApiUserToken: squ_53e25f1abe6db9259095570120052adad9be4380
-      template: ../partial-templates/variables.yml
+    env: 
+      uses: ../partial-templates/variables.yml
     steps:
     - uses: actions/checkout@v4
     - name: Prepare Analysis
