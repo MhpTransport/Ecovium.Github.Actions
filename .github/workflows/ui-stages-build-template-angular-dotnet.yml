@@ -61,7 +61,7 @@ jobs:
     #   skipTests: false
     #   sonarQubeSC: SonarQubeSC
 
-  npm-run-build:
+  npm-build:
     needs: calling-workflow-quality-gate-npm-pre-build
     env:
       template: ../partial-templates/variables.yml
@@ -95,7 +95,7 @@ jobs:
 
   calling-workflow-quality-gate-npm-template:
     uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-template.yml@develop
-    needs: npm-run-build
+    needs: npm-build
     # with:
     #   skipTests: false
     #   sonarQubeSC: SonarQubeSC
