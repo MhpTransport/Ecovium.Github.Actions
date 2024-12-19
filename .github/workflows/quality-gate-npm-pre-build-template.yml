@@ -25,13 +25,15 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Prepare Analysis
-      if: ${{ env.sonarQubeAvailable == 'true' && !github.event.inputs.skipTests }}
+      # if: ${{ env.sonarQubeAvailable == 'true' && !github.event.inputs.skipTests }}
       env:
         sonarQubeProjectKey: ${{ env.sonarQubeProjectKey }}
+        sonarQubeEndpointUrl: ${{ env.sonarQubeEndpointUrl }}
+        sonarQubeApiUserToken: ${{ env.sonarQubeApiUserToken }}
       run: |
         sonar-scanner \
           -Dsonar.projectKey=${{ env.sonarQubeProjectKey }} \
-          -Dsonar.host.url=${{ secrets.SONARQUBE_ENDPOINT_URL }} \
-          -Dsonar.login=${{ secrets.SONARQUBE_API_USER_TOKEN }} \
+          -Dsonar.host.url=${{ env.sonarQubeEndpointUrl }} \
+          -Dsonar.login=${{ env.sonarQubeApiUserToken }} \
           -Dsonar.javascript.lcov.reportPaths='${{ github.workspace }}/**/ClientApp/coverage/**/lcov-report/lcov.info'
 
