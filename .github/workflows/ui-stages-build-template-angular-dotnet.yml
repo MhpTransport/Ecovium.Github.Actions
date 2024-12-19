@@ -217,8 +217,8 @@ jobs:
     # Tag the commit
     - name: Tag Commit
       shell: pwsh
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # env:
+      #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         $env:BUILD_ID = $env:BUILD_ID
         Write-Output "Updated BUILD_ID: $env:BUILD_ID"
