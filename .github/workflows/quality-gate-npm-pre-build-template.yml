@@ -21,15 +21,13 @@ jobs:
   quality-gate-npm-prebuild:
     needs: calling-workflow-quality-gate-pre-build
     runs-on: ubuntu-latest
+    env:
+      template: ../partial-templates/variables.yml
+      buildConfiguration: Release
     steps:
     - uses: actions/checkout@v4
-
     - name: Prepare Analysis
       # if: ${{ env.sonarQubeAvailable == 'true' && !github.event.inputs.skipTests }}
-      env:
-        sonarQubeProjectKey: ${{ env.sonarQubeProjectKey }}
-        sonarQubeEndpointUrl: ${{ env.sonarQubeEndpointUrl }}
-        sonarQubeApiUserToken: ${{ env.sonarQubeApiUserToken }}
       run: |
         sonar-scanner \
           -Dsonar.projectKey=${{ env.sonarQubeProjectKey }} \
