@@ -34,25 +34,22 @@ permissions:
   id-token: write
   contents: write
 
-jobs:
+env:
+  feedName: EcoviumCommon
+  containerRegistrySC: acrsimplechaindevSC
+  sonarQubeSC: SonarQubeSC
+  npmTestsAvailable: false
+  packageJsonPath: ''
+  group: acr-devops
+  sonarQubeEndpointUrl: http://simplechain-sq-dev.germanywestcentral.cloudapp.azure.com
+  sonarQubeApiUserToken: squ_53e25f1abe6db9259095570120052adad9be4380
+  sonarQubeAvailable: ''
+  RunCypressGuiTests: ''
+  buildConfiguration: Release
+  TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
+  SERVICE_NAME: ${{ inputs.serviceName }}
 
-  # npm-install:
-  #   env:
-  #     template: ../partial-templates/variables.yml
-  #     buildConfiguration: Release
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: ./${{ inputs.projectService }}/ClientApp
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #     with:
-  #       persist-credentials: true
-  #   - name: Npm install --legacy-peer-deps
-  #     run: npm install --legacy-peer-deps 
-  #     env:
-  #       NODE_OPTIONS: --max_old_space_size=4096
-  #       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+jobs:
 
   calling-workflow-quality-gate-npm-pre-build:
     uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-pre-build-template.yml@develop
@@ -63,9 +60,6 @@ jobs:
 
   npm-build:
     needs: calling-workflow-quality-gate-npm-pre-build
-    env:
-      # template: ../partial-templates/variables.yml
-      buildConfiguration: Release
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -102,11 +96,6 @@ jobs:
 
   dotnet-build:
     needs: calling-workflow-quality-gate-npm-template
-    env:
-      # template: ../partial-templates/variables.yml
-      buildConfiguration: Release
-      TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
-      SERVICE_NAME: ${{ inputs.serviceName }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
