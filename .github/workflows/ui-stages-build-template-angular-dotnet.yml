@@ -29,6 +29,8 @@ on:
         required: true
       NPM_TOKEN:
         required: true
+      PUSH_TAG_GITHUB_TOKEN:
+        required: true
 
 permissions:
   id-token: write
