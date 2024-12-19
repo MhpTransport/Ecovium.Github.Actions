@@ -108,7 +108,7 @@ jobs:
       TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
       SERVICE_NAME: ${{ inputs.serviceName }}
       BUILD_ID: ${{ github.run_id }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -217,10 +217,12 @@ jobs:
     # Tag the commit
     - name: Tag Commit
       shell: pwsh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         $env:BUILD_ID = $env:BUILD_ID
         Write-Output "Updated BUILD_ID: $env:BUILD_ID"
-        git config --global user.email "github-actions@github.com"
-        git config --global user.name "GitHub Actions"
+        git config --global user.email "Samipkumar.Patel@ecovium.com"
+        git config --global user.name "Samipkumar-Patel"
         git tag $env:BUILD_ID
         git push origin --tags
