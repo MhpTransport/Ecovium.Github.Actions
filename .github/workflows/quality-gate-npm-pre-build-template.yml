@@ -13,35 +13,37 @@ on:
     #     description: 'sonarQubeSC'
     #     type: string
 
-# env:
-#   feedName: EcoviumCommon
-#   containerRegistrySC: acrsimplechaindevSC
-#   sonarQubeSC: SonarQubeSC
-#   npmTestsAvailable: false
-#   packageJsonPath: ''
-#   group: acr-devops
-#   sonarQubeEndpointUrl: http://simplechain-sq-dev.germanywestcentral.cloudapp.azure.com
-#   sonarQubeApiUserToken: squ_53e25f1abe6db9259095570120052adad9be4380
-#   sonarQubeAvailable: ''
-#   RunCypressGuiTests: ''
-#   buildConfiguration: Release
+env:
+  feedName: EcoviumCommon
+  containerRegistrySC: acrsimplechaindevSC
+  sonarQubeSC: SonarQubeSC
+  npmTestsAvailable: false
+  packageJsonPath: ''
+  group: acr-devops
+  sonarQubeEndpointUrl: http://simplechain-sq-dev.germanywestcentral.cloudapp.azure.com
+  sonarQubeApiUserToken: squ_53e25f1abe6db9259095570120052adad9be4380
+  sonarQubeAvailable: ''
+  RunCypressGuiTests: ''
+  buildConfiguration: Release
+  TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
+  SERVICE_NAME: ${{ inputs.serviceName }}
 
 jobs:
 
   calling-workflow-quality-gate-pre-build:
     uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-pre-build-template.yml@develop
 
-  quality-gate-npm-prebuild:
-    needs: calling-workflow-quality-gate-pre-build
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Prepare Analysis
-      # if: ${{ env.sonarQubeAvailable == 'true' && !github.event.inputs.skipTests }}
-      run: |
-        sonar-scanner \
-          -Dsonar.projectKey=${{ env.sonarQubeProjectKey }} \
-          -Dsonar.host.url=${{ env.sonarQubeEndpointUrl }} \
-          -Dsonar.login=${{ env.sonarQubeApiUserToken }} \
-          -Dsonar.javascript.lcov.reportPaths='${{ github.workspace }}/**/ClientApp/coverage/**/lcov-report/lcov.info'
+  # quality-gate-npm-prebuild:
+  #   needs: calling-workflow-quality-gate-pre-build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - name: Prepare Analysis
+  #     # if: ${{ env.sonarQubeAvailable == 'true' && !github.event.inputs.skipTests }}
+  #     run: |
+  #       sonar-scanner \
+  #         -Dsonar.projectKey=${{ env.sonarQubeProjectKey }} \
+  #         -Dsonar.host.url=${{ env.sonarQubeEndpointUrl }} \
+  #         -Dsonar.login=${{ env.sonarQubeApiUserToken }} \
+  #         -Dsonar.javascript.lcov.reportPaths='${{ github.workspace }}/**/ClientApp/coverage/**/lcov-report/lcov.info'
 
