@@ -15,13 +15,23 @@ on:
 
 jobs:
 
+  calling-workflow-quality-gate-pre-build:
+    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-pre-build-template.yml@develop
+
   quality-gate-npm-prebuild:
+    needs: calling-workflow-quality-gate-pre-build
     runs-on: ubuntu-latest
     steps:
-    # - uses: actions/checkout@v4
-    - name: Running quality-gate-npm-prebuild
-      run: echo "Running quality-gate-npm-prebuild"
+    - uses: actions/checkout@v4
 
-  calling-workflow-quality-gate-pre-build:
-    needs: quality-gate-npm-prebuild
-    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-pre-build-template.yml@develop
+    - name: Prepare Analysis
+      if: ${{ env.sonarQubeAvailable == 'true' && !github.event.inputs.skipTests }}
+      env:
+        sonarQubeProjectKey: ${{ env.sonarQubeProjectKey }}
+      run: |
+        sonar-scanner \
+          -Dsonar.projectKey=${{ env.sonarQubeProjectKey }} \
+          -Dsonar.host.url=${{ secrets.SONARQUBE_ENDPOINT_URL }} \
+          -Dsonar.login=${{ secrets.SONARQUBE_API_USER_TOKEN }} \
+          -Dsonar.javascript.lcov.reportPaths='${{ github.workspace }}/**/ClientApp/coverage/**/lcov-report/lcov.info'
+
