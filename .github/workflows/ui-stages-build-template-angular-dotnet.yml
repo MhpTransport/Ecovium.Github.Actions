@@ -107,6 +107,7 @@ jobs:
       buildConfiguration: Release
       TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
       SERVICE_NAME: ${{ inputs.serviceName }}
+      BUILD_ID: ${{ github.run_id }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -204,3 +205,19 @@ jobs:
         helm dependency update helm-chart
         helm package helm-chart --version "$TAG"
       working-directory: "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}"
+
+    # Helm Publish
+    - name: Helm Publish
+      if: always()
+      run: |
+        helm push *.tgz oci://acrsimplechaindev.azurecr.io/helm
+      working-directory: "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}"
+
+    # Tag the commit
+    - name: Tag Commit
+      shell: pwsh
+      run: |
+        $env:BUILD_ID = $env:BUILD_ID
+        Write-Output "Updated BUILD_ID: $env:BUILD_ID"        
+        git tag $env:BUILD_ID
+        git push origin --tags
