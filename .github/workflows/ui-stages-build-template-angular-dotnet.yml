@@ -34,20 +34,20 @@ permissions:
   id-token: write
   contents: write
 
-env:
-  feedName: EcoviumCommon
-  containerRegistrySC: acrsimplechaindevSC
-  sonarQubeSC: SonarQubeSC
-  npmTestsAvailable: false
-  packageJsonPath: ''
-  group: acr-devops
-  sonarQubeEndpointUrl: http://simplechain-sq-dev.germanywestcentral.cloudapp.azure.com
-  sonarQubeApiUserToken: squ_53e25f1abe6db9259095570120052adad9be4380
-  sonarQubeAvailable: ''
-  RunCypressGuiTests: ''
-  buildConfiguration: Release
-  TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
-  SERVICE_NAME: ${{ inputs.serviceName }}
+# env:
+#   feedName: EcoviumCommon
+#   containerRegistrySC: acrsimplechaindevSC
+#   sonarQubeSC: SonarQubeSC
+#   npmTestsAvailable: false
+#   packageJsonPath: ''
+#   group: acr-devops
+#   sonarQubeEndpointUrl: http://simplechain-sq-dev.germanywestcentral.cloudapp.azure.com
+#   sonarQubeApiUserToken: squ_53e25f1abe6db9259095570120052adad9be4380
+#   sonarQubeAvailable: ''
+#   RunCypressGuiTests: ''
+#   buildConfiguration: Release
+#   TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
+#   SERVICE_NAME: ${{ inputs.serviceName }}
 
 jobs:
 
