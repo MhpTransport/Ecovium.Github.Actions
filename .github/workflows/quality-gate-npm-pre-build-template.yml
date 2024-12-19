@@ -13,6 +13,19 @@ on:
     #     description: 'sonarQubeSC'
     #     type: string
 
+env:
+  feedName: EcoviumCommon
+  containerRegistrySC: acrsimplechaindevSC
+  sonarQubeSC: SonarQubeSC
+  npmTestsAvailable: false
+  packageJsonPath: ''
+  group: acr-devops
+  sonarQubeEndpointUrl: http://simplechain-sq-dev.germanywestcentral.cloudapp.azure.com
+  sonarQubeApiUserToken: squ_53e25f1abe6db9259095570120052adad9be4380
+  sonarQubeAvailable: ''
+  RunCypressGuiTests: ''
+  buildConfiguration: Release
+
 jobs:
 
   calling-workflow-quality-gate-pre-build:
@@ -21,8 +34,6 @@ jobs:
   quality-gate-npm-prebuild:
     needs: calling-workflow-quality-gate-pre-build
     runs-on: ubuntu-latest
-    env: 
-      uses: ../partial-templates/variables.yml
     steps:
     - uses: actions/checkout@v4
     - name: Prepare Analysis
