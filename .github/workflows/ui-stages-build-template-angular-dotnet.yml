@@ -218,6 +218,8 @@ jobs:
       shell: pwsh
       run: |
         $env:BUILD_ID = $env:BUILD_ID
-        Write-Output "Updated BUILD_ID: $env:BUILD_ID"        
+        Write-Output "Updated BUILD_ID: $env:BUILD_ID"
+        git config --global user.email "github-actions@github.com"
+        git config --global user.name "GitHub Actions"
         git tag $env:BUILD_ID
         git push origin --tags
