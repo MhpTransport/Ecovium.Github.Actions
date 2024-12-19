@@ -218,7 +218,10 @@ jobs:
     - name: Tag Commit
       if: always()
       run: |
-        git tag ${{ github.run_id }}
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
+        git tag $TAG
         git push origin --tags
       working-directory: "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}"
 
