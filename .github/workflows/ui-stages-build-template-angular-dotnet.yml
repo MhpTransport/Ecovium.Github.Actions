@@ -29,7 +29,7 @@ on:
         required: true
       NPM_TOKEN:
         required: true
-      PUSH_TAG_GITHUB_TOKEN:
+      GITHUB_TOKEN:
         required: true
 
 permissions:
