@@ -216,13 +216,21 @@ jobs:
 
     # Tag the commit
     - name: Tag Commit
-      shell: pwsh
-      # env:
-      #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      if: always()
       run: |
-        $env:BUILD_ID = $env:BUILD_ID
-        Write-Output "Updated BUILD_ID: $env:BUILD_ID"
-        git config --global user.email "Samipkumar.Patel@ecovium.com"
-        git config --global user.name "Samipkumar-Patel"
-        git tag $env:BUILD_ID
+        git tag ${{ github.run_id }}
         git push origin --tags
+      working-directory: "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}"
+
+    # # Tag the commit
+    # - name: Tag Commit
+    #   shell: pwsh
+    #   # env:
+    #   #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   run: |
+    #     $env:BUILD_ID = $env:BUILD_ID
+    #     Write-Output "Updated BUILD_ID: $env:BUILD_ID"
+    #     git config --global user.email "Samipkumar.Patel@ecovium.com"
+    #     git config --global user.name "Samipkumar-Patel"
+    #     git tag $env:BUILD_ID
+    #     git push origin --tags
