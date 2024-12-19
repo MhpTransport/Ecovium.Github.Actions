@@ -64,7 +64,7 @@ jobs:
   npm-build:
     needs: calling-workflow-quality-gate-npm-pre-build
     env:
-      template: ../partial-templates/variables.yml
+      # template: ../partial-templates/variables.yml
       buildConfiguration: Release
     runs-on: ubuntu-latest
     defaults:
@@ -103,7 +103,7 @@ jobs:
   dotnet-build:
     needs: calling-workflow-quality-gate-npm-template
     env:
-      template: ../partial-templates/variables.yml
+      # template: ../partial-templates/variables.yml
       buildConfiguration: Release
       TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
       SERVICE_NAME: ${{ inputs.serviceName }}
