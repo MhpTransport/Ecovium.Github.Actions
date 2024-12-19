@@ -110,6 +110,7 @@ jobs:
       TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
       SERVICE_NAME: ${{ inputs.serviceName }}
       BUILD_ID: ${{ github.run_id }}
+      GITHUB_TOKEN: ${{ secrets.PUSH_TAG_GITHUB_TOKEN }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
