@@ -46,6 +46,7 @@ jobs:
 
     - name: Sonar Prepare Analysis
       uses: docker://sonarsource/sonar-scanner-cli:latest
+      # if: env.sonarQubeAvailable == 'true' && inputs.skipTests != 'true'
       with:
         args: >
           -Dsonar.projectKey=${{ inputs.projectService }}
