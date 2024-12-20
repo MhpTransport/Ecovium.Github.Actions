@@ -15,6 +15,10 @@ on:
     #   sonarQubeSC:
     #     description: 'sonarQubeSC'
     #     type: string
+    outputs:
+      sonarQubeAvailable:
+        value: ${{ jobs.quality-gate-prebuild.outputs.output1 }}
+
 
 env:
   feedName: EcoviumCommon
@@ -46,7 +50,8 @@ jobs:
 
     - name: Sonar Prepare Analysis
       uses: docker://sonarsource/sonar-scanner-cli:latest
-      # if: env.sonarQubeAvailable == 'true' && inputs.skipTests != 'true'
+      if: outputs.sonarQubeAvailable == 'true'
+      # if: outputs.sonarQubeAvailable == 'true' && inputs.skipTests != 'true'
       with:
         args: >
           -Dsonar.projectKey=${{ inputs.projectService }}
