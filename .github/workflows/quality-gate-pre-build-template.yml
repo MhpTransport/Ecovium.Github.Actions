@@ -46,7 +46,7 @@ jobs:
 
         if ([string]::IsNullOrEmpty($sonarQubeProjectKey)) {
           # Extract the repository name after the '/' character
-          $repositoryName = ${{ inputs.projectService }} | Split-Path -Leaf
+          $repositoryName = $env:${{ inputs.projectService }} | Split-Path -Leaf
 
           Write-Host "sonarQubeProjectKey is not set or empty. Filling it with $repositoryName."
 
