@@ -41,7 +41,7 @@ jobs:
       run: echo "Running quality-gate-prebuild"
     - name: Fetch SonarQube projectKey
       run: |
-        $repositoryName = $env:BUILD_REPOSITORY_NAME
+        $repositoryName = ${{ inputs.projectService }}
         $sonarQubeProjectKey = $env:SONARQUBEPROJECTKEY
 
         if ([string]::IsNullOrEmpty($sonarQubeProjectKey)) {
@@ -50,8 +50,7 @@ jobs:
 
           Write-Host "sonarQubeProjectKey is not set or empty. Filling it with $repositoryName."
 
-          # $sonarQubeProjectKey = $repositoryName
-          $sonarQubeProjectKey = ${{ inputs.projectService }}
+          $sonarQubeProjectKey = $repositoryName
 
           # Set the variable for the current job
           Write-Host "##vso[task.setvariable variable=sonarQubeProjectKey]$sonarQubeProjectKey"
