@@ -41,23 +41,20 @@ jobs:
       run: echo "Running quality-gate-prebuild"
     - name: Fetch SonarQube projectKey
       run: |
-        $repositoryName = $env:${{ inputs.projectService }}
-        $sonarQubeProjectKey = $env:SONARQUBEPROJECTKEY
+        $repositoryName = $env:BUILD_REPOSITORY_NAME
+        ${{ env.sonarQubeProjectKey }} = $env:SONARQUBEPROJECTKEY
 
-        if ([string]::IsNullOrEmpty($sonarQubeProjectKey)) {
+        if ([string]::IsNullOrEmpty(${{ env.sonarQubeProjectKey }})) {
           # Extract the repository name after the '/' character
-          $repositoryName = $env:${{ inputs.projectService }} | Split-Path -Leaf
-
+          $repositoryName = $repositoryName | Split-Path -Leaf
           Write-Host "sonarQubeProjectKey is not set or empty. Filling it with $repositoryName."
-
-          $sonarQubeProjectKey = $repositoryName
-
+          ${{ env.sonarQubeProjectKey }} = $repositoryName
           # Set the variable for the current job
-          Write-Host "##vso[task.setvariable variable=sonarQubeProjectKey]$sonarQubeProjectKey"
+          Write-Host "##vso[task.setvariable variable=sonarQubeProjectKey]${{ env.sonarQubeProjectKey }}"
         } else {
-          Write-Host "sonarQubeProjectKey is already set to $sonarQubeProjectKey."
+          Write-Host "sonarQubeProjectKey is already set to ${{ env.sonarQubeProjectKey }}."
         }
-      shell: pwsh
+      shell: powershell
     - name: Check SonarQube project exists
       run: |
         #TODO: use taskLib to get rid of $sonarQubeEndpointUrl
