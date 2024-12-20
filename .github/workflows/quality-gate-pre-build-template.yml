@@ -58,28 +58,29 @@ jobs:
           Write-Host "sonarQubeProjectKey is already set to $sonarQubeProjectKey."
         }
       shell: pwsh
-    # - name: Check SonarQube project exists
-    #   run: |
-    #     #TODO: use taskLib to get rid of $sonarQubeEndpointUrl
-    #     #$serviceConnectionId = Get-Input -Name $sonarQubeEndpoint
-    #     #$sonarQubeEndpointUrl = Get-Endpoint -Name $serviceConnectionId
 
-    #     $username = "$(sonarQubeApiUserToken)"
-    #     $password = ""
-    #     $base64Auth = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("$($username):$($password)"))
-    #     $headers = @{
-    #       "Authorization" = "Basic $base64Auth"
-    #     }
+    - name: Check SonarQube project exists
+      env:
+        sonarQubeApiUserToken: ${{ env.sonarQubeApiUserToken }}
+        sonarQubeEndpointUrl: ${{ env.sonarQubeEndpointUrl }}
+        sonarQubeProjectKey: ${{ env.sonarQubeProjectKey }}
+      run: |
+        $username = "$env:sonarQubeApiUserToken"
+        $password = ""
+        $base64Auth = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("$($username):$($password)"))
+        $headers = @{
+          "Authorization" = "Basic $base64Auth"
+        }
 
-    #     $uri = "$(sonarQubeEndpointUrl)/api/components/show?component=$(sonarQubeProjectKey)"
+        $uri = "$env:sonarQubeEndpointUrl/api/components/show?component=$env:sonarQubeProjectKey"
 
-    #     try {
-    #       $response = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -ErrorAction SilentlyContinue -TimeoutSec 60
-    #       Write-Host "SonarQube project exists."
-    #       Write-Host "##vso[task.setvariable variable=sonarQubeAvailable]$true"
-    #     } catch {
-    #       # $_.Exception.Response.StatusCode.value__ should be 404 here
-    #       Write-Host "SonarQube doesn't exist. Setting sonarQubeAvailable variable to false."
-    #       Write-Host "##vso[task.setvariable variable=sonarQubeAvailable]$false"
-    #     }
-    #   shell: pwsh
+        try {
+          $response = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -ErrorAction SilentlyContinue -TimeoutSec 60
+          Write-Host "SonarQube project exists."
+          echo "sonarQubeAvailable=true" >> $GITHUB_ENV
+        } catch {
+          # $_.Exception.Response.StatusCode.value__ should be 404 here
+          Write-Host "SonarQube doesn't exist. Setting sonarQubeAvailable variable to false."
+          echo "sonarQubeAvailable=false" >> $GITHUB_ENV
+        }
+      shell: pwsh
