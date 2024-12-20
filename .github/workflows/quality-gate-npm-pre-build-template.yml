@@ -45,6 +45,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - run: echo ${{ needs.calling-workflow-quality-gate-pre-build.outputs.sonarQubeAvailable }}
+
     - name: Sonar Prepare Analysis
       uses: docker://sonarsource/sonar-scanner-cli:latest
       # if: outputs.sonarQubeAvailable == 'true' && inputs.skipTests != 'true'
