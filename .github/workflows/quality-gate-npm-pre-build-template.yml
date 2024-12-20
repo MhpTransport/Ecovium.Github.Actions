@@ -47,7 +47,6 @@ jobs:
 
     - name: Sonar Prepare Analysis
       uses: docker://sonarsource/sonar-scanner-cli:latest
-      if: outputs.sonarQubeAvailable == 'true'
       # if: outputs.sonarQubeAvailable == 'true' && inputs.skipTests != 'true'
       with:
         args: >
