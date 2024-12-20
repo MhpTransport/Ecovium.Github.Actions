@@ -43,20 +43,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    # - name: Prepare Analysis
-    #   # if: ${{ env.sonarQubeAvailable == 'true' && !github.event.inputs.skipTests }}
-    #   run: |
-    #     sonar-scanner \
-    #       -Dsonar.projectKey=${{ inputs.projectService }} \
-    #       -Dsonar.host.url=${{ env.sonarQubeEndpointUrl }} \
-    #       -Dsonar.login=${{ env.sonarQubeApiUserToken }} \
-    #       -Dsonar.javascript.lcov.reportPaths='${{ github.workspace }}/**/ClientApp/coverage/**/lcov-report/lcov.info'
 
-    - name: Run SonarQube Scanner
+    - name: Sonar Prepare Analysis
       uses: docker://sonarsource/sonar-scanner-cli:latest
       with:
         args: >
           -Dsonar.projectKey=${{ inputs.projectService }}
           -Dsonar.host.url=${{ env.sonarQubeEndpointUrl }}
           -Dsonar.login=${{ env.sonarQubeApiUserToken }}
+          -Dsonar.sources=.
           -Dsonar.javascript.lcov.reportPaths='${{ github.workspace }}/**/ClientApp/coverage/**/lcov-report/lcov.info'
