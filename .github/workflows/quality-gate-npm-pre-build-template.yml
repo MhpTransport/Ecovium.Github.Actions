@@ -49,7 +49,7 @@ jobs:
 
     - name: Sonar Prepare Analysis
       uses: docker://sonarsource/sonar-scanner-cli:latest
-      if: ${{ needs.calling-workflow-quality-gate-pre-build.outputs.sonarQubeAvailable == 'true' }}
+      # if: ${{ needs.calling-workflow-quality-gate-pre-build.outputs.sonarQubeAvailable == 'true' }}
       # if: outputs.sonarQubeAvailable == 'true' && inputs.skipTests != 'true'
       with:
         args: >
