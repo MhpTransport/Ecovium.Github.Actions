@@ -5,7 +5,10 @@ name: Quality gate pre-build
 
 on:
   workflow_call:
-    # inputs:
+    inputs:
+      projectService:
+        required: true
+        type: string
     #   skipTests:
     #     description: 'skipTests'
     #     type: string
@@ -47,7 +50,8 @@ jobs:
 
           Write-Host "sonarQubeProjectKey is not set or empty. Filling it with $repositoryName."
 
-          $sonarQubeProjectKey = $repositoryName
+          # $sonarQubeProjectKey = $repositoryName
+          $sonarQubeProjectKey = ${{ inputs.projectService }}
 
           # Set the variable for the current job
           Write-Host "##vso[task.setvariable variable=sonarQubeProjectKey]$sonarQubeProjectKey"
