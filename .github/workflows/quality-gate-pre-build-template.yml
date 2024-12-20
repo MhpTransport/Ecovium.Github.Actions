@@ -63,7 +63,7 @@ jobs:
       env:
         sonarQubeApiUserToken: ${{ env.sonarQubeApiUserToken }}
         sonarQubeEndpointUrl: ${{ env.sonarQubeEndpointUrl }}
-        sonarQubeProjectKey: ${{ env.sonarQubeProjectKey }}
+        sonarQubeProjectKey: $sonarQubeProjectKey
       run: |
         $username = "$env:sonarQubeApiUserToken"
         $password = ""
