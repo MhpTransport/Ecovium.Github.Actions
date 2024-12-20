@@ -41,7 +41,7 @@ jobs:
       run: echo "Running quality-gate-prebuild"
     - name: Fetch SonarQube projectKey
       run: |
-        $repositoryName = ${{ inputs.projectService }}
+        $repositoryName = $env:${{ inputs.projectService }}
         $sonarQubeProjectKey = $env:SONARQUBEPROJECTKEY
 
         if ([string]::IsNullOrEmpty($sonarQubeProjectKey)) {
