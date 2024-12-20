@@ -54,7 +54,7 @@ jobs:
         } else {
           Write-Host "sonarQubeProjectKey is already set to ${{ env.sonarQubeProjectKey }}."
         }
-      shell: powershell
+      shell: pwsh
     - name: Check SonarQube project exists
       run: |
         #TODO: use taskLib to get rid of $sonarQubeEndpointUrl
