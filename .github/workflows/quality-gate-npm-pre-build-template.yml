@@ -5,7 +5,10 @@ name: Quality gate npm pre-build
 
 on:
   workflow_call:
-    # inputs:
+    inputs:
+      projectService:
+        required: true
+        type: string
     #   skipTests:
     #     description: 'skipTests'
     #     type: string
@@ -32,6 +35,8 @@ jobs:
 
   calling-workflow-quality-gate-pre-build:
     uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-pre-build-template.yml@develop
+    with:
+      projectService: ${{ inputs.projectService }}
 
   # quality-gate-npm-prebuild:
   #   needs: calling-workflow-quality-gate-pre-build
