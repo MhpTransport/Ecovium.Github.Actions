@@ -54,7 +54,7 @@ jobs:
         } else {
           Write-Host "sonarQubeProjectKey is already set to $sonarQubeProjectKey."
         }
-      shell: powershell
+      shell: pwsh
     - name: Check SonarQube project exists
       run: |
         #TODO: use taskLib to get rid of $sonarQubeEndpointUrl
@@ -79,4 +79,4 @@ jobs:
           Write-Host "SonarQube doesn't exist. Setting sonarQubeAvailable variable to false."
           Write-Host "##vso[task.setvariable variable=sonarQubeAvailable]$false"
         }
-      shell: powershell
+      shell: pwsh
