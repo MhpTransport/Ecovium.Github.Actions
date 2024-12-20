@@ -13,54 +13,70 @@ on:
     #     description: 'sonarQubeSC'
     #     type: string
 
+env:
+  feedName: EcoviumCommon
+  containerRegistrySC: acrsimplechaindevSC
+  sonarQubeSC: SonarQubeSC
+  npmTestsAvailable: false
+  packageJsonPath: ''
+  group: acr-devops
+  sonarQubeEndpointUrl: http://simplechain-sq-dev.germanywestcentral.cloudapp.azure.com
+  sonarQubeApiUserToken: squ_53e25f1abe6db9259095570120052adad9be4380
+  sonarQubeAvailable: ''
+  RunCypressGuiTests: ''
+  buildConfiguration: Release
+  TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
+  SERVICE_NAME: ${{ inputs.serviceName }}
+
 jobs:
 
   quality-gate-prebuild:
-    env:
-      template: ../partial-templates/variables.yml  
     runs-on: ubuntu-latest
     steps:
     # - uses: actions/checkout@v4
     - name: Running quality-gate-prebuild
       run: echo "Running quality-gate-prebuild"
-    # - name: Fetch SonarQube projectKey
-    #   run: |
-    #     $repositoryName = $env:BUILD_REPOSITORY_NAME
-    #     ${{ env.sonarQubeProjectKey }} = $env:SONARQUBEPROJECTKEY
+    - name: Fetch SonarQube projectKey
+      run: |
+        $repositoryName = $env:BUILD_REPOSITORY_NAME
+        $sonarQubeProjectKey = $env:SONARQUBEPROJECTKEY
 
-    #     if ([string]::IsNullOrEmpty(${{ env.sonarQubeProjectKey }})) {
-    #       # Extract the repository name after the '/' character
-    #       $repositoryName = $repositoryName | Split-Path -Leaf
-    #       Write-Host "sonarQubeProjectKey is not set or empty. Filling it with $repositoryName."
-    #       ${{ env.sonarQubeProjectKey }} = $repositoryName
-    #       # Set the variable for the current job
-    #       Write-Host "##vso[task.setvariable variable=sonarQubeProjectKey]${{ env.sonarQubeProjectKey }}"
-    #     } else {
-    #       Write-Host "sonarQubeProjectKey is already set to ${{ env.sonarQubeProjectKey }}."
-    #     }
-    #   shell: powershell
-    # - name: Check SonarQube project exists
-    #   run: |
-    #     #TODO: use taskLib to get rid of ${{ env.sonarQubeEndpointUrl }}
-    #     #$serviceConnectionId = Get-Input -Name $sonarQubeEndpoint
-    #     #${{ env.sonarQubeEndpointUrl }} = Get-Endpoint -Name $serviceConnectionId
+        if ([string]::IsNullOrEmpty($sonarQubeProjectKey)) {
+          # Extract the repository name after the '/' character
+          $repositoryName = $repositoryName | Split-Path -Leaf
 
-    #     $username = "${{ env.sonarQubeApiUserToken }}"
-    #     $password = ""
-    #     $base64Auth = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${{ env.$username }}:${{ env.$password }}"))
-    #     $headers = @{
-    #       "Authorization" = "Basic $base64Auth"
-    #     }
+          Write-Host "sonarQubeProjectKey is not set or empty. Filling it with $repositoryName."
 
-    #     $uri = "${{ env.sonarQubeEndpointUrl }}/api/components/show?component=${{ env.sonarQubeProjectKey }}"
+          $sonarQubeProjectKey = $repositoryName
 
-    #     try {
-    #       $response = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -ErrorAction SilentlyContinue -TimeoutSec 60
-    #       Write-Host "SonarQube project exists."
-    #       Write-Host "##vso[task.setvariable variable=sonarQubeAvailable]$true"
-    #     } catch {
-    #       # $_.Exception.Response.StatusCode.value__ should be 404 here
-    #       Write-Host "SonarQube doesn't exist. Setting sonarQubeAvailable variable to false."
-    #       Write-Host "##vso[task.setvariable variable=sonarQubeAvailable]$false"
-    #     }
-    #   shell: powershell
+          # Set the variable for the current job
+          Write-Host "##vso[task.setvariable variable=sonarQubeProjectKey]$sonarQubeProjectKey"
+        } else {
+          Write-Host "sonarQubeProjectKey is already set to $sonarQubeProjectKey."
+        }
+      shell: powershell
+    - name: Check SonarQube project exists
+      run: |
+        #TODO: use taskLib to get rid of $sonarQubeEndpointUrl
+        #$serviceConnectionId = Get-Input -Name $sonarQubeEndpoint
+        #$sonarQubeEndpointUrl = Get-Endpoint -Name $serviceConnectionId
+
+        $username = "$(sonarQubeApiUserToken)"
+        $password = ""
+        $base64Auth = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("$($username):$($password)"))
+        $headers = @{
+          "Authorization" = "Basic $base64Auth"
+        }
+
+        $uri = "$(sonarQubeEndpointUrl)/api/components/show?component=$(sonarQubeProjectKey)"
+
+        try {
+          $response = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -ErrorAction SilentlyContinue -TimeoutSec 60
+          Write-Host "SonarQube project exists."
+          Write-Host "##vso[task.setvariable variable=sonarQubeAvailable]$true"
+        } catch {
+          # $_.Exception.Response.StatusCode.value__ should be 404 here
+          Write-Host "SonarQube doesn't exist. Setting sonarQubeAvailable variable to false."
+          Write-Host "##vso[task.setvariable variable=sonarQubeAvailable]$false"
+        }
+      shell: powershell
