@@ -76,6 +76,7 @@ jobs:
       with:
         name: dist-folder-npm
         path: ${{ github.workspace }}/${{ inputs.projectService }}/ClientApp/dist
+        retention-days: 1
 
   calling-workflow-quality-gate-npm-template:
     uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-template.yml@develop
