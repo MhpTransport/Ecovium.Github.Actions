@@ -71,12 +71,12 @@ jobs:
         NODE_OPTIONS: --max_old_space_size=4096
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         
-    - name: Upload dist post npm build
-      uses: actions/upload-artifact@v4
-      with:
-        name: dist-folder-npm
-        path: ${{ github.workspace }}/${{ inputs.projectService }}/ClientApp/dist
-        retention-days: 1
+    # - name: Upload dist post npm build
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: dist-folder-npm
+    #     path: ${{ github.workspace }}/${{ inputs.projectService }}/ClientApp/dist
+    #     retention-days: 1
 
   calling-workflow-quality-gate-npm-template:
     uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-template.yml@develop
@@ -121,14 +121,14 @@ jobs:
         --configuration ${{ env.buildConfiguration }} \
         -o ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish
 
-    - name: Download dist from npm build
-      uses: actions/download-artifact@v4
-      with:
-        name: dist-folder-npm
-        path: ${{ github.workspace }}/ClientApp/dist
-    - shell: bash
-      run: |
-        cp -r ${{ github.workspace }}/ClientApp ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/
+    # - name: Download dist from npm build
+    #   uses: actions/download-artifact@v4
+    #   with:
+    #     name: dist-folder-npm
+    #     path: ${{ github.workspace }}/ClientApp/dist
+    # - shell: bash
+    #   run: |
+    #     cp -r ${{ github.workspace }}/ClientApp ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/
 
     - name: List files in app/publish
       if: always()
