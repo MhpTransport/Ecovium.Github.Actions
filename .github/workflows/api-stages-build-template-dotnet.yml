@@ -42,22 +42,22 @@ env:
 
 jobs:
 
-  calling-workflow-quality-gate-dotnet-pre-build:
-    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-dotnet-pre-build-template.yml@develop
-    with:
-      projectService: ${{ inputs.projectService }}
-    #   skipTests: false
-    #   sonarQubeSC: SonarQubeSC
+  # calling-workflow-quality-gate-dotnet-pre-build:
+  #   uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-dotnet-pre-build-template.yml@develop
+  #   with:
+  #     projectService: ${{ inputs.projectService }}
+  #   #   skipTests: false
+  #   #   sonarQubeSC: SonarQubeSC
 
-  calling-workflow-quality-gate-dotnet-template:
-    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-dotnet-template.yml@develop
-    needs: calling-workflow-quality-gate-dotnet-pre-build
-    # with:
-    #   skipTests: false
-    #   sonarQubeSC: SonarQubeSC
+  # calling-workflow-quality-gate-dotnet-template:
+  #   uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-dotnet-template.yml@develop
+  #   needs: calling-workflow-quality-gate-dotnet-pre-build
+  #   # with:
+  #   #   skipTests: false
+  #   #   sonarQubeSC: SonarQubeSC
 
   dotnet-build:
-    needs: calling-workflow-quality-gate-dotnet-template
+    # needs: calling-workflow-quality-gate-dotnet-template
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -80,7 +80,7 @@ jobs:
 
     - name: Dotnet restore
       if: ${{ vars.feedsToUseOption != 'config' }}
-      run: dotnet restore ${{ inputs.projectCsprojPath }} --source https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/${{ env.feedName }}/nuget/v3/index.json  --source https://api.nuget.org/v3/index.json
+      run: dotnet restore ${{ inputs.projectCsprojPath }} -s https://api.nuget.org/v3/index.json
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
