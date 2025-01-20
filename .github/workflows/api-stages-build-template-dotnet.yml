@@ -38,6 +38,7 @@ env:
   buildConfiguration: Release
   TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
   SERVICE_NAME: ${{ inputs.serviceName }}
+  nugetConfigPath: './nuget.config'
 
 jobs:
 
@@ -71,7 +72,14 @@ jobs:
       run: |
         dotnet nuget remove source EcoviumCommon || echo "Source not found, skipping removal"
 
+    - name: Dotnet restore when feedsToUseOption is config
+      if: ${{ vars.feedsToUseOption == 'config' }}
+      run: dotnet restore ${{ inputs.projectCsprojPath }} --configfile ${{ env.nugetConfigPath }}
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
     - name: Dotnet restore
+      if: ${{ vars.feedsToUseOption != 'config' }}
       run: dotnet restore ${{ inputs.projectCsprojPath }}
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
