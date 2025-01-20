@@ -1,0 +1,204 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Build API .NET App
+
+on:
+  workflow_call:
+    inputs:
+      serviceName:
+        description: 'Service name'
+        type: string
+      buildVersion:
+        description: 'Build version'
+        type: string
+      projectService:
+        required: true
+        type: string
+      projectCsprojPath:
+        required: true
+        type: string
+
+
+permissions:
+  id-token: write
+  contents: write
+
+env:
+  feedName: EcoviumCommon
+  containerRegistrySC: acrsimplechaindevSC
+  sonarQubeSC: SonarQubeSC
+  npmTestsAvailable: false
+  packageJsonPath: ''
+  group: acr-devops
+  sonarQubeEndpointUrl: http://simplechain-sq-dev.germanywestcentral.cloudapp.azure.com
+  sonarQubeApiUserToken: squ_53e25f1abe6db9259095570120052adad9be4380
+  sonarQubeAvailable: ''
+  RunCypressGuiTests: ''
+  buildConfiguration: Release
+  TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
+  SERVICE_NAME: ${{ inputs.serviceName }}
+
+jobs:
+
+  calling-workflow-quality-gate-npm-pre-build:
+    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-pre-build-template.yml@develop
+    with:
+      projectService: ${{ inputs.projectService }}
+    #   skipTests: false
+    #   sonarQubeSC: SonarQubeSC
+
+  npm-build:
+    needs: calling-workflow-quality-gate-npm-pre-build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./${{ inputs.projectService }}/ClientApp
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: true
+        
+    - name: Npm install --legacy-peer-deps
+      run: npm install --legacy-peer-deps
+      env:
+        NODE_OPTIONS: --max_old_space_size=4096
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
+    - name: Npm run build
+      run: npm run build --prod
+      env:
+        NODE_OPTIONS: --max_old_space_size=4096
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
+    # - name: Upload dist post npm build
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: dist-folder-npm
+    #     path: ${{ github.workspace }}/${{ inputs.projectService }}/ClientApp/dist
+    #     retention-days: 1
+
+  calling-workflow-quality-gate-npm-template:
+    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-template.yml@develop
+    needs: npm-build
+    # with:
+    #   skipTests: false
+    #   sonarQubeSC: SonarQubeSC
+
+  dotnet-build:
+    needs: calling-workflow-quality-gate-npm-template
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: true
+
+    - uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.x.x'
+
+    - name: Remove existing NuGet source
+      run: |
+        dotnet nuget remove source EcoviumCommon || echo "Source not found, skipping removal"
+
+    - name: Dotnet restore
+      run: dotnet restore ${{ inputs.projectCsprojPath }}
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    - name: List Nuget Sources
+      run: dotnet nuget list source
+
+    - name: Dotnet Build
+      run: dotnet build ${{ inputs.projectCsprojPath }} --configuration ${{ env.buildConfiguration }} -o app/build
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    - name: Dotnet Publish
+      if: always()
+      run: |
+        dotnet publish \
+        --configuration ${{ env.buildConfiguration }} \
+        -o ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish
+
+    # - name: Download dist from npm build
+    #   uses: actions/download-artifact@v4
+    #   with:
+    #     name: dist-folder-npm
+    #     path: ${{ github.workspace }}/ClientApp/dist
+    # - shell: bash
+    #   run: |
+    #     cp -r ${{ github.workspace }}/ClientApp ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/
+
+    - name: List files in app/publish
+      if: always()
+      run: |
+        ls -R ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish
+      shell: pwsh
+
+    # Login to ACR
+    - uses: azure/login@v2
+      with:
+        creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID_ACR }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+    - name: Log in to Azure Container Registry
+      run: az acr login --name acrsimplechaindev
+
+    # Docker Build & Push
+    - name: Docker build and push
+      if: always()
+      run: |
+        export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
+        export SERVICE=$(echo "${SERVICE_NAME}")
+        
+        docker build . -t container/"$SERVICE":"$TAG"
+        docker tag container/"$SERVICE":"$TAG" acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
+        docker push acrsimplechaindev.azurecr.io/container/"$SERVICE":"$TAG"
+      working-directory: ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker
+
+    # Overwrite image tag in values.yaml
+    - name: Overwrite image tag
+      if: always()
+      shell: pwsh
+      run: |
+        $env:TAG = $env:TAG_NAME -replace '/', '_' -replace '[^a-zA-Z0-9._\-]', ''
+        Write-Output "Updated TAG: $env:TAG"
+
+        Install-Module PowerShell-yaml -Force -Repository PSGallery -Scope CurrentUser
+        Import-Module PowerShell-yaml
+        $values = Get-Content -Path "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/helm-chart/values.yaml" -Raw | ConvertFrom-Yaml
+        if ($values.image.tag -eq "latest") {
+          $values.image.tag = '$env:TAG'
+          $values = ConvertTo-Yaml -Data $values
+          $values | Out-File -FilePath "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/helm-chart/values.yaml"
+          Write-Verbose "Replacing image tag value with: $env:TAG" -Verbose
+        } else {
+          Write-Verbose "Image tag does not exist or value is not latest" -Verbose
+        }
+
+    # Helm Login and Package
+    - name: Helm Login and Package
+      if: always()
+      run: |
+        export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
+        echo "TAG Value : $TAG "
+        helm dependency update helm-chart
+        helm package helm-chart --version "$TAG"
+      working-directory: "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}"
+
+    # Helm Publish
+    - name: Helm Publish
+      if: always()
+      run: |
+        helm push *.tgz oci://acrsimplechaindev.azurecr.io/helm
+      working-directory: "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}"
+
+    # Tag the commit
+    - name: Tag Commit
+      if: always()
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
+        git tag $TAG
+        git push origin --tags
+      working-directory: "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}"
