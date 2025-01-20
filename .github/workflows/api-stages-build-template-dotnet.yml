@@ -41,52 +41,22 @@ env:
 
 jobs:
 
-  calling-workflow-quality-gate-npm-pre-build:
-    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-pre-build-template.yml@develop
+  calling-workflow-quality-gate-dotnet-pre-build:
+    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-dotnet-pre-build-template.yml@develop
     with:
       projectService: ${{ inputs.projectService }}
     #   skipTests: false
     #   sonarQubeSC: SonarQubeSC
 
-  npm-build:
-    needs: calling-workflow-quality-gate-npm-pre-build
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./${{ inputs.projectService }}/ClientApp
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        persist-credentials: true
-        
-    - name: Npm install --legacy-peer-deps
-      run: npm install --legacy-peer-deps
-      env:
-        NODE_OPTIONS: --max_old_space_size=4096
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        
-    - name: Npm run build
-      run: npm run build --prod
-      env:
-        NODE_OPTIONS: --max_old_space_size=4096
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        
-    # - name: Upload dist post npm build
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: dist-folder-npm
-    #     path: ${{ github.workspace }}/${{ inputs.projectService }}/ClientApp/dist
-    #     retention-days: 1
-
-  calling-workflow-quality-gate-npm-template:
-    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-npm-template.yml@develop
-    needs: npm-build
+  calling-workflow-quality-gate-dotnet-template:
+    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-dotnet-template.yml@develop
+    needs: calling-workflow-quality-gate-dotnet-pre-build
     # with:
     #   skipTests: false
     #   sonarQubeSC: SonarQubeSC
 
   dotnet-build:
-    needs: calling-workflow-quality-gate-npm-template
+    needs: calling-workflow-quality-gate-dotnet-template
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
