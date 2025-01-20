@@ -80,7 +80,7 @@ jobs:
 
     - name: Dotnet restore
       if: ${{ vars.feedsToUseOption != 'config' }}
-      run: dotnet restore ${{ inputs.projectCsprojPath }} --configfile ${{ env.nugetConfigPath }}
+      run: dotnet restore ${{ inputs.projectCsprojPath }} --source https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/${{ env.feedName }}/nuget/v3/index.json  --source https://api.nuget.org/v3/index.json
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
