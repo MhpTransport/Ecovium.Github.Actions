@@ -83,7 +83,7 @@ jobs:
 
     - name: Dotnet restore
       if: ${{ vars.feedsToUseOption != 'config' }}
-      run: dotnet restore ${{ inputs.projectCsprojPath }}
+      run: dotnet restore ${{ inputs.projectCsprojPath }} --verbosity Normal
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -96,16 +96,16 @@ jobs:
         NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     - name: Dotnet Publish
-      if: always()
+      # if: always()
       run: |
-        dotnet publish \
+        dotnet publish ${{ inputs.projectCsprojPath }} \
         --configuration ${{ env.buildConfiguration }} \
-        -o ${{ github.workspace }}/devops/api/${{ inputs.serviceName }}/docker/app/publish
+        -o ${{ github.workspace }}/devops/api/${{ inputs.serviceName }}/docker/app/publish/${{ inputs.projectService }}
 
     - name: List files in app/publish
-      if: always()
+      # if: always()
       run: |
-        ls -R ${{ github.workspace }}/devops/api/${{ inputs.serviceName }}/docker/app/publish
+        ls -R ${{ github.workspace }}/devops/api/${{ inputs.serviceName }}/docker/app/publish/${{ inputs.projectService }}
       shell: pwsh
 
     # Login to ACR
@@ -117,7 +117,7 @@ jobs:
 
     # Docker Build & Push
     - name: Docker build and push
-      if: always()
+      # if: always()
       run: |
         export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
         export SERVICE=$(echo "${SERVICE_NAME}")
@@ -129,7 +129,7 @@ jobs:
 
     # Overwrite image tag in values.yaml
     - name: Overwrite image tag
-      if: always()
+      # if: always()
       shell: pwsh
       run: |
         $env:TAG = $env:TAG_NAME -replace '/', '_' -replace '[^a-zA-Z0-9._\-]', ''
@@ -149,7 +149,7 @@ jobs:
 
     # Helm Login and Package
     - name: Helm Login and Package
-      if: always()
+      # if: always()
       run: |
         export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
         echo "TAG Value : $TAG "
@@ -159,14 +159,14 @@ jobs:
 
     # Helm Publish
     - name: Helm Publish
-      if: always()
+      # if: always()
       run: |
         helm push *.tgz oci://acrsimplechaindev.azurecr.io/helm
       working-directory: "${{ github.workspace }}/devops/api/${{ inputs.serviceName }}"
 
     # Tag the commit
     - name: Tag Commit
-      if: always()
+      # if: always()
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
