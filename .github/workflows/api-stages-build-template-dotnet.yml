@@ -39,25 +39,26 @@ env:
   TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
   SERVICE_NAME: ${{ inputs.serviceName }}
   nugetConfigPath: './nuget.config'
+  nugetSourceFeed: 'https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json'
 
 jobs:
 
-  # calling-workflow-quality-gate-dotnet-pre-build:
-  #   uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-dotnet-pre-build-template.yml@develop
-  #   with:
-  #     projectService: ${{ inputs.projectService }}
-  #   #   skipTests: false
-  #   #   sonarQubeSC: SonarQubeSC
+  calling-workflow-quality-gate-dotnet-pre-build:
+    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-dotnet-pre-build-template.yml@develop
+    with:
+      projectService: ${{ inputs.projectService }}
+    #   skipTests: false
+    #   sonarQubeSC: SonarQubeSC
 
-  # calling-workflow-quality-gate-dotnet-template:
-  #   uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-dotnet-template.yml@develop
-  #   needs: calling-workflow-quality-gate-dotnet-pre-build
-  #   # with:
-  #   #   skipTests: false
-  #   #   sonarQubeSC: SonarQubeSC
+  calling-workflow-quality-gate-dotnet-template:
+    uses: MhpTransport/Ecovium.Github.Actions/.github/workflows/quality-gate-dotnet-template.yml@develop
+    needs: calling-workflow-quality-gate-dotnet-pre-build
+    # with:
+    #   skipTests: false
+    #   sonarQubeSC: SonarQubeSC
 
   dotnet-build:
-    # needs: calling-workflow-quality-gate-dotnet-template
+    needs: calling-workflow-quality-gate-dotnet-template
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -67,7 +68,7 @@ jobs:
     - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.x.x'
-        source-url: https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json
+        source-url: ${{ env.nugetSourceFeed }}
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
