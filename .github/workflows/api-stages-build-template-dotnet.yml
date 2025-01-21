@@ -67,10 +67,13 @@ jobs:
     - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.x.x'
+        source-url: https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-    - name: Remove existing NuGet source
-      run: |
-        dotnet nuget remove source EcoviumCommon || echo "Source not found, skipping removal"
+    # - name: Remove existing NuGet source
+    #   run: |
+    #     dotnet nuget remove source EcoviumCommon || echo "Source not found, skipping removal"
 
     - name: Dotnet restore when feedsToUseOption is config
       if: ${{ vars.feedsToUseOption == 'config' }}
