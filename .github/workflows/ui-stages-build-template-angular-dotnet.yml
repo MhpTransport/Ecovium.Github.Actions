@@ -38,6 +38,8 @@ env:
   buildConfiguration: Release
   TAG_NAME: ${{ inputs.buildVersion }}-${{ github.run_id }}.${{ github.ref_name }}.${{ github.sha }}
   SERVICE_NAME: ${{ inputs.serviceName }}
+  nugetConfigPath: './nuget.config'
+  nugetSourceFeed: 'https://pkgs.dev.azure.com/ecovium-cloud-platform/_packaging/EcoviumCommon/nuget/v3/index.json'
 
 jobs:
 
@@ -96,13 +98,23 @@ jobs:
     - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.x.x'
+        source-url: ${{ env.nugetSourceFeed }}
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-    - name: Remove existing NuGet source
-      run: |
-        dotnet nuget remove source EcoviumCommon || echo "Source not found, skipping removal"
+    # - name: Remove existing NuGet source
+    #   run: |
+    #     dotnet nuget remove source EcoviumCommon || echo "Source not found, skipping removal"
+
+    - name: Dotnet restore when feedsToUseOption is config
+      if: ${{ vars.feedsToUseOption == 'config' }}
+      run: dotnet restore ${{ inputs.projectCsprojPath }} --configfile ${{ env.nugetConfigPath }}
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     - name: Dotnet restore
-      run: dotnet restore ${{ inputs.projectCsprojPath }}
+      if: ${{ vars.feedsToUseOption != 'config' }}
+      run: dotnet restore ${{ inputs.projectCsprojPath }} --verbosity Normal
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -115,11 +127,11 @@ jobs:
         NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     - name: Dotnet Publish
-      if: always()
+      # if: always()
       run: |
-        dotnet publish \
+        dotnet publish ${{ inputs.projectCsprojPath }} \
         --configuration ${{ env.buildConfiguration }} \
-        -o ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish
+        -o ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/${{ inputs.projectService }}
 
     # - name: Download dist from npm build
     #   uses: actions/download-artifact@v4
@@ -128,12 +140,12 @@ jobs:
     #     path: ${{ github.workspace }}/ClientApp/dist
     # - shell: bash
     #   run: |
-    #     cp -r ${{ github.workspace }}/ClientApp ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/
+    #     cp -r ${{ github.workspace }}/ClientApp ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/${{ inputs.projectService }}/
 
     - name: List files in app/publish
-      if: always()
+      # if: always()
       run: |
-        ls -R ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish
+        ls -R ${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}/docker/app/publish/${{ inputs.projectService }}
       shell: pwsh
 
     # Login to ACR
@@ -145,7 +157,7 @@ jobs:
 
     # Docker Build & Push
     - name: Docker build and push
-      if: always()
+      # if: always()
       run: |
         export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
         export SERVICE=$(echo "${SERVICE_NAME}")
@@ -157,7 +169,7 @@ jobs:
 
     # Overwrite image tag in values.yaml
     - name: Overwrite image tag
-      if: always()
+      # if: always()
       shell: pwsh
       run: |
         $env:TAG = $env:TAG_NAME -replace '/', '_' -replace '[^a-zA-Z0-9._\-]', ''
@@ -177,7 +189,7 @@ jobs:
 
     # Helm Login and Package
     - name: Helm Login and Package
-      if: always()
+      # if: always()
       run: |
         export TAG=$(echo "${TAG_NAME}" | tr '/' '_')
         echo "TAG Value : $TAG "
@@ -187,14 +199,14 @@ jobs:
 
     # Helm Publish
     - name: Helm Publish
-      if: always()
+      # if: always()
       run: |
         helm push *.tgz oci://acrsimplechaindev.azurecr.io/helm
       working-directory: "${{ github.workspace }}/devops/ui/${{ inputs.serviceName }}"
 
     # Tag the commit
     - name: Tag Commit
-      if: always()
+      # if: always()
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
