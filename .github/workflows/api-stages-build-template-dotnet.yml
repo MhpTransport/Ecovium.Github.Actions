@@ -80,7 +80,7 @@ jobs:
 
     - name: Dotnet restore
       if: ${{ vars.feedsToUseOption != 'config' }}
-      run: dotnet restore ${{ inputs.projectCsprojPath }} --source EcoviumCommon
+      run: dotnet restore ${{ inputs.projectCsprojPath }}
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
