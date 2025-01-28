@@ -14,10 +14,11 @@ on:
     #       - 'stage'
     #       - 'prod'
     inputs:
-      environments:
-        description: 'Select the target environments (comma-separated, e.g., dev,int,stage,prod)'
+      dev:
+        description: 'Select the target environment'
+        # description: 'Select the target environments (comma-separated, e.g., dev,int,stage,prod)'
         required: true
-        type: string
+        type: boolean
       serviceName:
         description: 'Service name'
         required: true
@@ -34,7 +35,8 @@ env:
 jobs:
 
   deploy_to_dev:
-    if: ${{ startsWith(github.event.inputs.environments, 'dev') }}
+    # if: ${{ startsWith(github.event.inputs.environments, 'dev') }}
+    if: ${{ inputs.dev }}
     runs-on: ubuntu-latest
   
     permissions:
