@@ -33,14 +33,14 @@ env:
 
 jobs:
 
-  deploy_to_selective_stages:
+  deploy_to_dev:
+    if: github.event.inputs.environments == 'dev'
+    runs-on: ubuntu-latest
   
     permissions:
       actions: read
       contents: read
       id-token: write
-
-    runs-on: ubuntu-latest
 
     env:
       serviceName: portal-host-ui
@@ -87,6 +87,26 @@ jobs:
               exit 1
             fi
           done
+
+  deploy_to_int:
+    if: github.event.inputs.environments == 'int'
+    runs-on: ubuntu-latest
+  
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+
+    env:
+      serviceName: portal-host-ui
+      acrName: acrsimplechaindev.azurecr.io
+      HELM_EXPERIMENTAL_OCI: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
 #       - name: Helm login & Pull Chart
 #         run: |
 #           cd ${HOME}
