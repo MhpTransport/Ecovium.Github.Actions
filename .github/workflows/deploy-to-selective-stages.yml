@@ -1,4 +1,4 @@
-name: deploy -> portal-host-ui
+name: Deploy to Selective Stages
 
 on:
   workflow_dispatch: # This will allow manual triggering of the workflow
