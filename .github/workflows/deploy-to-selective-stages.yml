@@ -34,7 +34,7 @@ env:
 jobs:
 
   deploy_to_dev:
-    if: github.event.inputs.environments == 'dev'
+    if: ${{ startsWith(github.event.inputs.environments, 'dev') }}
     runs-on: ubuntu-latest
   
     permissions:
@@ -89,8 +89,7 @@ jobs:
           done
 
   deploy_to_int:
-    if: github.event.inputs.environments == 'int'
-    needs: deploy_to_dev
+    if: ${{ startsWith(github.event.inputs.environments, 'dev,int') }} || ${{ startsWith(github.event.inputs.environments, 'int') }}
     runs-on: ubuntu-latest
   
     permissions:
