@@ -67,6 +67,11 @@ jobs:
               CLUSTER_NAME="aks-cluster-dev"
               echo "RESOURCE_GROUP : $RESOURCE_GROUP"
               echo "CLUSTER_NAME : $CLUSTER_NAME"
+            elif [ "$ENV" == "int" ]; then
+              RESOURCE_GROUP="rg-aks-int"
+              CLUSTER_NAME="aks-cluster-int"
+              echo "RESOURCE_GROUP : $RESOURCE_GROUP"
+              echo "CLUSTER_NAME : $CLUSTER_NAME"
             elif [ "$ENV" == "staging" ]; then
               RESOURCE_GROUP="rg-aks-staging"
               CLUSTER_NAME="aks-cluster-staging"
