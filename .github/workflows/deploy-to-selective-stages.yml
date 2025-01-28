@@ -91,6 +91,7 @@ jobs:
   deploy_to_int:
     if: ${{ startsWith(github.event.inputs.environments, 'int') || github.event.inputs.environments == 'dev,int' }}
     runs-on: ubuntu-latest
+    needs: deploy_to_dev
   
     permissions:
       actions: read
