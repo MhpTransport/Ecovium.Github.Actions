@@ -89,7 +89,7 @@ jobs:
           done
 
   deploy_to_int:
-    if: ${{ startsWith(github.event.inputs.environments, 'int') || github.event.inputs.environments == 'dev,int' }}
+    if: ${{ startsWith(github.event.inputs.environments, 'int') || github.event.inputs.environments == 'dev,int' && always() }}
     runs-on: ubuntu-latest
     needs: deploy_to_dev
   
