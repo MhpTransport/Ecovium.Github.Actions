@@ -1,0 +1,137 @@
+name: deploy -> portal-host-ui
+
+on:
+  workflow_dispatch: # This will allow manual triggering of the workflow
+    # inputs:
+    #   environment:
+    #     type: choice
+    #     description: 'Select Environment to deploy'
+    #     required: true
+    #     default: 'dev'
+    #     options:
+    #       - 'dev'
+    #       - 'int'
+    #       - 'stage'
+    #       - 'prod'
+    inputs:
+      environments:
+        description: 'Select the target environments (comma-separated, e.g., dev,int,stage,prod)'
+        required: true
+        default: 'dev'
+        type: string
+    
+env:
+  AZURE_CONTAINER_REGISTRY: "your-azure-container-registry"
+  CONTAINER_NAME: "your-container-name"
+  RESOURCE_GROUP: "your-resource-group"
+  CLUSTER_NAME: "your-cluster-name"
+  CHART_PATH: "your-chart-path"
+  CHART_OVERRIDE_PATH: "your-chart-override-path"
+
+jobs:
+
+  deploy_to_selective_stages:
+  
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+
+    runs-on: ubuntu-latest
+
+    env:
+      serviceName: portal-host-ui
+      acrName: acrsimplechaindev.azurecr.io
+      HELM_EXPERIMENTAL_OCI: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Parse selected environments
+        id: parse_envs
+        run: |
+          SELECTED_ENVS="${{ github.event.inputs.environments }}"
+          JSON_ARRAY=$(echo $SELECTED_ENVS | jq -c -R 'split(",")')
+          echo "SELECTED_ENV_LIST=${JSON_ARRAY}" >> $GITHUB_ENV
+
+      - name: Deploy to selected environments
+        run: |
+          for ENV in $(echo $SELECTED_ENV_LIST | jq -r '.[]'); do
+            echo "Deploying to environment: $ENV"
+            if [ "$ENV" == "dev" ]; then
+              RESOURCE_GROUP="rg-aks-dev"
+              CLUSTER_NAME="aks-cluster-dev"
+              echo "RESOURCE_GROUP : $RESOURCE_GROUP"
+              echo "CLUSTER_NAME : $CLUSTER_NAME"
+            elif [ "$ENV" == "staging" ]; then
+              RESOURCE_GROUP="rg-aks-staging"
+              CLUSTER_NAME="aks-cluster-staging"
+              echo "RESOURCE_GROUP : $RESOURCE_GROUP"
+              echo "CLUSTER_NAME : $CLUSTER_NAME"  
+            elif [ "$ENV" == "prod" ]; then
+              RESOURCE_GROUP="rg-aks-prod"
+              CLUSTER_NAME="aks-cluster-prod"
+              echo "RESOURCE_GROUP : $RESOURCE_GROUP"
+              echo "CLUSTER_NAME : $CLUSTER_NAME"
+            else
+              echo "Unknown environment: $ENV"
+              exit 1
+            fi
+          done
+#       - name: Helm login & Pull Chart
+#         run: |
+#           cd ${HOME}
+#           export TAG=$(echo "$GITHUB_REF" | cut -d "/" -f3)
+#           echo "TAG value is : $TAG"
+#           mkdir helm
+#           cd helm
+#           helm registry login '${{ env.acrName }}' --username '${{ secrets.ACR_USERNAME }}' --password '${{ secrets.ACR_PASSWORD }}'
+#           #echo "Pull Chart Name ${{ env.serviceName }} with version ${{ env.tag }}"
+#           echo "Pull Chart Name ${{ env.serviceName }} with version $TAG"
+#           #helm pull oci://${{ env.acrName }}/helm/${{ env.serviceName }} --version ${{ env.tag }} --untar
+#           helm pull oci://${{ env.acrName }}/helm/${{ env.serviceName }} --version $TAG --untar
+#           ls
+#           echo "Show Values YAML inside Helm Chart before replacing"
+#           cat portal-host-ui/values.yaml
+#           echo "Start replacing"
+#           sed -i 's|#{acrName}#|acrsimplechaindev.azurecr.io|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_options}#|https://options.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_workflow}#|https://workflow.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_localisation}#|https://localisation.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_application_management}#|https://application-management.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_tenant_management}#|https://tenant-management.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_user_management}#|https://user-management.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_warehouse_api}#|https://warehouse.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_hardware_suite_api}#|https://hardware.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_ecommerce_storage}#|https://ecommerce.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_adress_management}#|https://address-management.api.dev.ecovium.com/graphql|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_file_management}#|https://file-management.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_map}#|https://map.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_scheck}#|https://scheck.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_simplechain_data}#|https://simplechain-data.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_simplechain_processes}#|https://simplechain-processes.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_process_orchestrator}#|https://business-process-orchestration.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_customs_aaas_data}#|https://customs-aaas-data.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{service_location_customs_aaas_box}#|https://customs-aaas-box.api.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{ui_location_demo_examples}#|https://modules-example-ui-controls.cloud.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{ui_location_legacy_examples}#|https://modules-example-legacy.cloud.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{ui_location_ecommerce_app}#|https://ecommerce-app.cloud.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{ui_location_bi_qlik}#|https://bimesse.mhp-fair.de/testmhp/sense/app/b524ebb6-58d2-4d02-ba1c-210391167dd4/overview|g' portal-host-ui/values.yaml
+#           sed -i 's|#{authority}#|https://login.dev.ecovium.com/|g' portal-host-ui/values.yaml
+#           sed -i 's|#{ui_domain}#|cloud.dev.ecovium.com|g' portal-host-ui/values.yaml
+#           sed -i 's|#{ui-certifcate-name}#|cloud-dev-ecovium-com|g' portal-host-ui/values.yaml
+#           echo "End Replacing"
+#           echo "Show values YAML after replacing"
+#           cat portal-host-ui/values.yaml
+
+
+#       - name: Connect to AKS & Run Helm Upgrade
+#         run: |
+#           echo "Target Env : ${{ github.event.inputs.environment }}"
+# #          az login
+# #          az account set --subscription 60d5585d-bac5-4c27-ba3b-f5d255a13fc2
+# #          az aks get-credentials --resource-group rg-dev-foundation --name aks-dev-foundation --overwrite-existing
+# #          helm ls -n otel
+# #          cd ${HOME}
+# #          helm upgrade --install portal-host-ui-gha helm/portal-host-ui/ --namespace otel
