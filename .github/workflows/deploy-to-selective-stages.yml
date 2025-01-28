@@ -19,7 +19,6 @@ on:
         # description: 'Select the target environments (comma-separated, e.g., dev,int,stage,prod)'
         required: true
         type: boolean
-        default: true
       serviceName:
         description: 'Service name'
         required: true
