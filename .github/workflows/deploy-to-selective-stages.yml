@@ -1,7 +1,7 @@
 name: Deploy to Selective Stages
 
 on:
-  workflow_dispatch: # This will allow manual triggering of the workflow
+  workflow_call: # This will allow manual triggering of the workflow
     # inputs:
     #   environment:
     #     type: choice
@@ -17,9 +17,11 @@ on:
       environments:
         description: 'Select the target environments (comma-separated, e.g., dev,int,stage,prod)'
         required: true
+        type: string
       serviceName:
         description: 'Service name'
         required: true
+        type: string
     
 env:
   AZURE_CONTAINER_REGISTRY: "your-azure-container-registry"
