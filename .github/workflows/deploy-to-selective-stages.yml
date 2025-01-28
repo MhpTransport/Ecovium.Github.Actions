@@ -17,8 +17,9 @@ on:
       environments:
         description: 'Select the target environments (comma-separated, e.g., dev,int,stage,prod)'
         required: true
-        default: 'dev'
-        type: string
+      serviceName:
+        description: 'Service name'
+        required: true
     
 env:
   AZURE_CONTAINER_REGISTRY: "your-azure-container-registry"
