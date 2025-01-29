@@ -47,58 +47,7 @@ jobs:
 
   deploy_to_dev:
     if: ${{ inputs.dev }}
-    runs-on: ubuntu-latest
-  
-    permissions:
-      actions: read
-      contents: read
-      id-token: write
-
-    env:
-      serviceName: portal-host-ui
-      acrName: acrsimplechaindev.azurecr.io
-      HELM_EXPERIMENTAL_OCI: "1"
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Parse selected environments
-        id: parse_envs
-        run: |
-          SELECTED_ENVS="${{ github.event.inputs.environments }}"
-          JSON_ARRAY=$(echo $SELECTED_ENVS | jq -c -R 'split(",")')
-          echo "SELECTED_ENV_LIST=${JSON_ARRAY}" >> $GITHUB_ENV
-
-      - name: Deploy to selected environments
-        run: |
-          for ENV in $(echo $SELECTED_ENV_LIST | jq -r '.[]'); do
-            echo "Deploying to environment: $ENV"
-            if [ "$ENV" == "dev" ]; then
-              RESOURCE_GROUP="rg-aks-dev"
-              CLUSTER_NAME="aks-cluster-dev"
-              echo "RESOURCE_GROUP : $RESOURCE_GROUP"
-              echo "CLUSTER_NAME : $CLUSTER_NAME"
-            elif [ "$ENV" == "int" ]; then
-              RESOURCE_GROUP="rg-aks-int"
-              CLUSTER_NAME="aks-cluster-int"
-              echo "RESOURCE_GROUP : $RESOURCE_GROUP"
-              echo "CLUSTER_NAME : $CLUSTER_NAME"
-            elif [ "$ENV" == "stage" ]; then
-              RESOURCE_GROUP="rg-aks-staging"
-              CLUSTER_NAME="aks-cluster-staging"
-              echo "RESOURCE_GROUP : $RESOURCE_GROUP"
-              echo "CLUSTER_NAME : $CLUSTER_NAME"  
-            elif [ "$ENV" == "prod" ]; then
-              RESOURCE_GROUP="rg-aks-prod"
-              CLUSTER_NAME="aks-cluster-prod"
-              echo "RESOURCE_GROUP : $RESOURCE_GROUP"
-              echo "CLUSTER_NAME : $CLUSTER_NAME"
-            else
-              echo "Unknown environment: $ENV"
-              exit 1
-            fi
-          done
+    uses: ./.github/workflows/deploy-to-dev.yml
 
   deploy_to_int:
     if: ${{ inputs.int && always() }}
