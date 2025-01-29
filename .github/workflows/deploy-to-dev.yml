@@ -8,7 +8,6 @@ on:
     inputs:
       serviceName:
         description: 'Service name'
-        default: 'portal-host-ui'
         type: string
 
 env:
