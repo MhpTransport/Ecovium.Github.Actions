@@ -2,17 +2,6 @@ name: Deploy to Selective Stages
 
 on:
   workflow_call: # This will allow manual triggering of the workflow
-    # inputs:
-    #   environment:
-    #     type: choice
-    #     description: 'Select Environment to deploy'
-    #     required: true
-    #     default: 'dev'
-    #     options:
-    #       - 'dev'
-    #       - 'int'
-    #       - 'stage'
-    #       - 'prod'
     inputs:
       dev:
         description: 'DEV'
