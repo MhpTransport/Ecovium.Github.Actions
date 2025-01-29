@@ -43,7 +43,8 @@ jobs:
       id-token: write
       contents: write
       actions: read
-    if: ${{ inputs.int }}
+    if: ${{ inputs.int && always() }}
+    needs: deploy_to_dev
     uses: ./.github/workflows/deploy-to-dev.yml
     with:
       serviceName: ${{ inputs.serviceName }}
@@ -54,7 +55,8 @@ jobs:
       id-token: write
       contents: write
       actions: read
-    if: ${{ inputs.stage }}
+    if: ${{ inputs.stage && always() }}
+    needs: deploy_to_int
     uses: ./.github/workflows/deploy-to-dev.yml
     with:
       serviceName: ${{ inputs.serviceName }}
@@ -65,7 +67,8 @@ jobs:
       id-token: write
       contents: write
       actions: read
-    if: ${{ inputs.prod }}
+    if: ${{ inputs.prod && always() }}
+    needs: deploy_to_stage
     uses: ./.github/workflows/deploy-to-dev.yml
     with:
       serviceName: ${{ inputs.serviceName }}
