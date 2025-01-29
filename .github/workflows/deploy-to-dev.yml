@@ -48,17 +48,22 @@ jobs:
     #     cat ${{ inputs.serviceName }}/values.yaml
 
     # - name: Azure login
-    #   uses: azure/login@v1.4.6
+    #   uses: azure/login@v2
     #   with:
     #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
     #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-    #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_DEV }}    
+    #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_ACR }}
 
-    # Login to ACR
-    - uses: azure/login@v2
+    - name: Azure CLI script
+      uses: azure/cli@v2
       with:
-        creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID_DEV }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
-
+        azcliversion: latest
+        inlineScript: |
+          az account set --subscription 60d5585d-bac5-4c27-ba3b-f5d255a13fc2
+          az aks get-credentials --resource-group rg-dev-foundation --name aks-dev-foundation --overwrite-existing
+          az account show
+          helm ls -n otel
+          
     # - name: Connect to AKS & Run Helm Upgrade
     #   run: |
     #     # az account set --subscription 60d5585d-bac5-4c27-ba3b-f5d255a13fc2
