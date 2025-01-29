@@ -5,19 +5,17 @@ name: Deploy to DEV
 
 on:
   workflow_call:
-    # inputs:
-    #   skipTests:
-    #     description: 'skipTests'
-    #     type: string
-    #   sonarQubeSC:
-    #     description: 'sonarQubeSC'
-    #     type: string
+    inputs:
+      serviceName:
+        description: 'Service name'
+        default: 'portal-host-ui'
+        type: string
 
 jobs:
 
   deploy_to_dev:  
     runs-on: ubuntu-latest
     steps:
-    # - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
     - name: Running Deploy to DEV
       run: echo "Deploy to DEV"
