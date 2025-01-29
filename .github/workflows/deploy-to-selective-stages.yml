@@ -46,6 +46,10 @@ env:
 jobs:
 
   deploy_to_dev:
+    permissions:
+      id-token: write
+      contents: write
+      actions: read
     if: ${{ inputs.dev }}
     uses: ./.github/workflows/deploy-to-dev.yml
     with:
