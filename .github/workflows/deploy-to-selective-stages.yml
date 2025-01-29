@@ -48,6 +48,9 @@ jobs:
   deploy_to_dev:
     if: ${{ inputs.dev }}
     uses: ./.github/workflows/deploy-to-dev.yml
+    with:
+      serviceName: ${{ inputs.serviceName }}
+    secrets: inherit
 
   deploy_to_int:
     if: ${{ inputs.int && always() }}
