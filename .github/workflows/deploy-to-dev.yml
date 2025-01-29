@@ -11,6 +11,11 @@ on:
         default: 'portal-host-ui'
         type: string
 
+permissions:
+  id-token: write
+  contents: write
+  actions: read
+
 jobs:
 
   deploy_to_dev:  
