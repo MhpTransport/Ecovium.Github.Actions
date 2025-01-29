@@ -35,7 +35,7 @@ jobs:
         mkdir helm
         cd helm
         echo "Pull Chart Name ${{ inputs.serviceName }} with version $TAG"
-        helm pull oci://acrsimplechaindev/helm/${{ inputs.serviceName }} --version $TAG --untar
+        helm pull oci://acrsimplechaindev.azurecr.io/helm/${{ inputs.serviceName }} --version $TAG --untar
         ls
         echo "Show Values YAML inside Helm Chart before replacing"
         cat ${{ inputs.serviceName }}/values.yaml
